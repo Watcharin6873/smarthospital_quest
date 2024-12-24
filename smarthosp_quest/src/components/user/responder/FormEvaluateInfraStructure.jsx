@@ -248,13 +248,13 @@ const FormEvaluateInfraStructure = () => {
             <div
               className=''
             >
-              <div className='grid grid-cols-8 ml-10 bg-slate-100 text-md text-slate-950'>
+              <div className='grid grid-cols-7 ml-10 bg-slate-100 text-md text-slate-950'>
                 <div className='col-span-4 text-center border'>
                   <p className='font-bold p-2'>รายการ</p>
                 </div>
-                <div className='text-center border'>
+                {/* <div className='text-center border'>
                   <p className='font-bold p-2'>จำเป็นดำเนินการ</p>
-                </div>
+                </div> */}
                 <div className='text-center border'>
                   <p className='font-bold p-2'>คะแนนเต็ม</p>
                 </div>
@@ -268,7 +268,7 @@ const FormEvaluateInfraStructure = () => {
               {
                 dataSource.map((item, k1) => (
                   <>
-                    <div className='grid grid-cols-8 ml-10'>
+                    <div className='grid grid-cols-7 ml-10'>
                       <div className='col-span-4 border'>
                         <p
                           className='p-2 font-bold'
@@ -308,7 +308,7 @@ const FormEvaluateInfraStructure = () => {
                           </Radio.Group>
                         </Form.Item>
                       </div>
-                      <div className='text-center border'>
+                      {/* <div className='text-center border'>
                         <div className='flex justify-center mt-4'>
                           <Form.Item
                             name={'necessary' + item.id}
@@ -331,7 +331,7 @@ const FormEvaluateInfraStructure = () => {
                             </div>
                           </Form.Item>
                         </div>
-                      </div>
+                      </div> */}
                       <div className='text-center border'>
                         <Form.Item
                           name={'sub_quest_total_point' + item.id}
