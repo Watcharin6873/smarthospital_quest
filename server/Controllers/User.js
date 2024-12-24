@@ -1,0 +1,195 @@
+const prisma = require('../Config/Prisma')
+
+
+exports.getListUsers = async (req, res) => {
+    try {
+        //Code
+        const user = await prisma.users.findMany({
+            orderBy: { createdAt: 'desc' }
+        })
+        res.json(user)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Sever error!"
+        })
+    }
+}
+
+exports.getListUsersByProv = async (req, res) => {
+    try {
+        //Code
+        const { province } = req.query
+        const user = await prisma.users.findMany({
+            where: {
+                role: { not: "admin" },
+                objective: { in: ["responder"] },
+                province: province
+            },
+            orderBy: { createdAt: 'desc' }
+        })
+        res.json(user)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Sever error!"
+        })
+    }
+}
+
+
+exports.getListUsersByZone = async (req, res) => {
+    try {
+        //Code
+        const { zone } = req.query
+        const user = await prisma.users.findMany({
+            where: {
+                role: { not: "admin" },
+                objective: { in: ["prov_approve"] },
+                zone: zone
+            },
+            orderBy: { createdAt: 'desc' }
+        })
+        res.json(user)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Sever error!"
+        })
+    }
+}
+
+exports.getListUserById = async (req, res) => {
+    try {
+        //Code
+        const { id } = req.params
+        const user = await prisma.users.findFirst({
+            where: {
+                id: Number(id)
+            }
+        })
+        res.json(user)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Sever error!"
+        })
+    }
+}
+
+exports.changeStatus = async (req, res) => {
+    try {
+        //Code
+        const { id, enabled } = req.body
+
+        const user = await prisma.users.update({
+            where: { id: Number(id) },
+            data: {
+                enabled: enabled,
+                updatedAt: new Date()
+            }
+        })
+
+        res.json({
+            message: `Update Account ของคุณ${user.firstname_th} สำเร็จ!`
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Sever error!"
+        })
+    }
+}
+
+exports.changeRole = async (req, res) => {
+    try {
+        //Code
+        const { id, role } = req.body
+
+        const user = await prisma.users.update({
+            where: { id: Number(id) },
+            data: {
+                role: role,
+                updatedAt: new Date()
+            }
+        })
+
+        res.json({
+            message: `เปลี่ยนสิทธิเข้าใช้งานของคุณ${user.firstname_th} สำเร็จ!`
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Sever error!"
+        })
+    }
+}
+
+exports.changeLevel = async (req, res) => {
+    try {
+        //Code
+        const { id, level } = req.body
+
+        const user = await prisma.users.update({
+            where: { id: Number(id) },
+            data: {
+                level: level,
+                updatedAt: new Date()
+            }
+        })
+
+        res.json({
+            message: `เปลี่ยนระดับสิทธิเข้าใช้งานของคุณ${user.firstname_th} สำเร็จ!`
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Sever error!"
+        })
+    }
+}
+
+
+exports.changeObjective = async (req, res) => {
+    try {
+        //Code
+        const { id, objective } = req.body
+
+        const user = await prisma.users.update({
+            where: { id: Number(id) },
+            data: {
+                objective: objective,
+                updatedAt: new Date()
+            }
+        })
+
+        res.json({
+            message: `เปลี่ยนประเภทผู้ใช้งานของคุณ${user.firstname_th} สำเร็จ!`
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Sever error!"
+        })
+    }
+}
+
+exports.removeUser = async (req, res) => {
+    try {
+        //Code
+        const { id } = req.params
+
+        const user = await prisma.users.delete({
+            where: { id: Number(id) }
+        })
+
+        res.json({
+            message: `ลบบัญชีของคุณ${user.firstname_th} สำเร็จ!`
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Sever error!"
+        })
+    }
+}
