@@ -52,7 +52,7 @@ const Home = () => {
   return (
     <div>
       <div className='mb-3 text-center'>
-        <p className='animate-bounce w-full h-6 text-2xl text-red-500'>***ระบบจะเปิดใช้งานในวันที่ 2 มกราคม 2568***</p>
+        <p className='w-full h-6 text-2xl text-red-500'>***ระบบจะเปิดใช้งานหลังจากประชุมชี้แจงการใช้งานระบบประเมินโรงพยาบาลอัจฉริยะ ในวันที่ 7 มกราคม 2568***</p>
       </div>
       <div className='grid grid-cols-4 gap-4'>
         {/* <div className='bg-white rounded-md shadow-md p-3'>

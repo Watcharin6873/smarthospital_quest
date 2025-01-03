@@ -35,6 +35,17 @@ export const getListEvaluateByHosp = async (token, values) => {
     )
 }
 
+//Get Evaluate by hcode
+export const getEvaluateByHosp = async (token, questId, hcode) => {
+    return await axios.get(import.meta.env.VITE_APP_API + `/getEvaluateByHosp?questId=${questId}&hcode=${hcode}`,
+        {
+            headers: {
+                Authorization: `Bearer ` + token
+            }
+        }
+    )
+}
+
 //Sum Evaluate by hcode
 export const sumEvaluateByHosp = async (token, hcode) => {
     return await axios.get(import.meta.env.VITE_APP_API + `/sumEvaluateByHosp?hcode=${hcode}`,
@@ -95,8 +106,8 @@ export const refreshEvaluate = async (token, category_questId, hcode) => {
 
 
 //Update point Evaluate
-export const updatePointEvaluate = async (token, values) => {
-    return await axios.put(import.meta.env.VITE_APP_API + `/updatePointEvaluate`, values,
+export const updateChoiceEvaluate = async (token, values) => {
+    return await axios.put(import.meta.env.VITE_APP_API + `/updateChoiceEvaluate`, values,
         {
             headers: {
                 Authorization: `Bearer ` + token
@@ -125,6 +136,52 @@ export const getDocumentsFromEvaluate = async (token) => {
         {
             headers: {
                 Authorization: `Bearer ` + token
+            }
+        }
+    )
+}
+
+//get documents of evaluate
+export const getDocumentByEvaluateByHosp = async (token, hcode, values) => {
+    return await axios.get(import.meta.env.VITE_APP_API + `/getDocumentsByEvaluateByHosp?category_questId=${values}&hcode=${hcode}`,
+        {
+            headers: {
+                Authorization: `Bearer ` + token
+            }
+        }
+    )
+}
+
+
+//get Evidence of evaluate
+export const getEvidenceFromEvaluate = async (token, id, hcode) => {
+    return await axios.get(import.meta.env.VITE_APP_API + `/getEvidenceFromEvaluate?id=${id}&hcode=${hcode}`,
+        {
+            headers: {
+                Authorization: `Bearer ` + token
+            }
+        }
+    )
+}
+
+//Save documents for Evaluate
+export const uploadFileById = async (token, id, values) => {
+    return await axios.put(import.meta.env.VITE_APP_API + `/uploadFileById/` + id, values,
+        {
+            headers: {
+                Authorization: `Bearer ` + token,
+                "Content-Type": "multipart/form-data"
+            }
+        }
+    )
+}
+
+//ssj approve 
+export const ssjChangeStatusApprove = async (token, values) => {
+    return await axios.put(import.meta.env.VITE_APP_API + `/ssjChangeStatusApprove`, values,
+        {
+            headers: {
+                Authorization: `Bearer ` + token,
             }
         }
     )

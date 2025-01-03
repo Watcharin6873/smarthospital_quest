@@ -170,7 +170,7 @@ const HomeUsers = () => {
               <p className=''>คะแนนเต็ม</p>
               {
                 peopleScore.map((item4) => (
-                  item4.total_point === ''
+                  item4.total_point === null
                     ? <p className='text-2xl text-blue-700'>0/100</p>
                     : <p className='text-2xl text-blue-700'>{item4.total_point}/100</p>
                 ))

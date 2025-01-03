@@ -37,6 +37,7 @@ import Zone_ApproveManagement from '../pages/user/approver/zone/Zone_ApproveMana
 import Zone_ApprovePeople from '../pages/user/approver/zone/Zone_ApprovePeople'
 import Zone_ApproveService from '../pages/user/approver/zone/Zone_ApproveService'
 import ReportZone from '../pages/report/ReportZone'
+import HomeSSJ from '../pages/user/approver/prov/HomeSSJ'
 
 
 
@@ -78,7 +79,7 @@ const router = createBrowserRouter([
     path: '/smarthosp-quest/user/prov-approve',
     element: <ProtectRouteUser element={<LayoutProvApprover />} />,
     children: [
-      { index: true, element: <HomeUser /> },
+      { index: true, element: <HomeSSJ /> },
       { path: 'ssj-usermanagement', element: <SSJ_UserManagement /> },
       { path: 'ssj-approve-infrastructure', element: <SSJ_ApproveInfrastructure />},
       { path: 'ssj-approve-management', element: <SSJ_ApproveManagement /> },

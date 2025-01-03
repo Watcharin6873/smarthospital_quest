@@ -9,7 +9,9 @@ const {
     changeRole,
     changeLevel,
     changeObjective,
-    removeUser
+    removeUser,
+    sumApproveUserOnProv,
+    sumNotApproveUserOnProv
  } = require('../Controllers/User')
  const {authCheck, adminCheck} = require('../Middleware/Auth')
 
@@ -18,6 +20,10 @@ router.get('/getListUsers',authCheck,adminCheck, getListUsers)
 router.get('/getListUsersByProv',authCheck, getListUsersByProv)
 
 router.get('/getListUsersByZone',authCheck, getListUsersByZone)
+
+router.get('/sumApproveUserOnProv/:province',authCheck, sumApproveUserOnProv)
+
+router.get('/sumNotApproveUserOnProv/:province',authCheck, sumNotApproveUserOnProv)
 
 router.get('/getListUserById/:id',authCheck, adminCheck, getListUserById)
 

@@ -127,6 +127,14 @@ exports.getListSubQuestsForEvaluate = async (req, res) => {
                         quest_name: true
                     }
                 },
+                // evaluates: {
+                //     select:{
+                //         id:true,
+                //         category_questId:true,
+                //         questId: true,
+                //         sub_questId: true
+                //     }
+                // },
                 sub_quest_lists: {
                     select: {
                         id: true,

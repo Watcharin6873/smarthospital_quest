@@ -193,3 +193,46 @@ exports.removeUser = async (req, res) => {
         })
     }
 }
+
+exports.sumApproveUserOnProv = async(req, res) =>{
+    try {
+       //Code
+       const {province} = req.params
+       const result = await prisma.users.findMany({
+        where:{
+            AND:[
+                {province: province},
+                {enabled: true},
+                {level: 4}
+            ]
+        }
+       }) 
+
+       res.json(result)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message:"Server error!"})
+    }
+}
+
+
+exports.sumNotApproveUserOnProv = async(req, res) =>{
+    try {
+       //Code
+       const {province} = req.params
+       const result = await prisma.users.findMany({
+        where:{
+            AND:[
+                {province: province},
+                {enabled: false},
+                {level: 4}
+            ]
+        }
+       }) 
+
+       res.json(result)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message:"Server error!"})
+    }
+}

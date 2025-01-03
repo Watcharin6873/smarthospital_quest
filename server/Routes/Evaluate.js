@@ -2,18 +2,22 @@ const express = require('express')
 const router = express.Router()
 const {
     saveEvaluates,
+    getEvaluateByHosp,
     getListEvaluateByHosp,
     getListEvaluateByProv,
     getListEvaluateByZone,
     refreshEvaluate,
     getEvaluateById,
-    updatePointEvaluate,
+    updateChoiceEvaluate,
     saveDocuments,
     saveEvidenceAll,
-    getDocumentsFromEvaluate,
+    getEvidenceFromEvaluate,
     getDocumentsByEvaluateByHosp,
     truncateTable,
-    sumEvaluateByHosp
+    sumEvaluateByHosp,
+    saveEvaluates2,
+    uploadFileById,
+    ssjChangeStatusApprove
 } = require('../Controllers/Evaluate')
 const {authCheck} = require('../Middleware/Auth')
 const {uploadFile} = require('../Middleware/UploadFile')
@@ -21,6 +25,8 @@ const {uploadAllTypeFile} = require('../Middleware/UploadAllTypeFile')
 
 
 router.post('/saveEvaluates',authCheck, saveEvaluates)
+
+router.post('/saveEvaluates2',authCheck, uploadAllTypeFile, saveEvaluates2)
 
 router.get('/getListEvaluateByHosp/:hcode',authCheck, getListEvaluateByHosp)
 
@@ -32,15 +38,21 @@ router.get('/refreshEvaluate',authCheck, refreshEvaluate)
 
 router.get('/sumEvaluateByHosp',authCheck, sumEvaluateByHosp)
 
+router.get('/getEvaluateByHosp',authCheck, getEvaluateByHosp)
+
 router.get('/getEvaluateById/:id',authCheck, getEvaluateById)
 
-router.put('/updatePointEvaluate',authCheck, updatePointEvaluate)
+router.put('/updateChoiceEvaluate',authCheck, updateChoiceEvaluate)
 
 router.post('/saveDocuments',authCheck, uploadFile, saveDocuments)
 
 router.post('/saveEvidenceAll',authCheck, uploadAllTypeFile, saveEvidenceAll)
 
-router.get('/getDocumentsFromEvaluate', authCheck, getDocumentsFromEvaluate)
+router.put('/uploadFileById/:id',authCheck, uploadAllTypeFile, uploadFileById)
+
+router.put('/ssjChangeStatusApprove',authCheck, ssjChangeStatusApprove)
+
+router.get('/getEvidenceFromEvaluate', authCheck, getEvidenceFromEvaluate)
 
 router.get('/getDocumentsByEvaluateByHosp', authCheck, getDocumentsByEvaluateByHosp)
 

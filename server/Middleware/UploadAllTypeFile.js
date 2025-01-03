@@ -25,7 +25,7 @@ exports.uploadAllTypeFile = multer({
 
 // Check file type
 function checkFileType(file, cb) {
-    const filetypes = /.jpg/;
+    const filetypes = /jpg|jpeg|png|pdf/;
     const extname = filetypes.test(path.extname(file.originalname));
     const mimetype = filetypes.test(file.mimetype);
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import useGlobalStore from '../../../store/global-store'
-import { EditFilled, ExclamationCircleFilled, MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { ExclamationCircleFilled, MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { Table, Form, InputNumber, Button, Input, Space, Select, Checkbox, Divider, Upload, Modal, Radio } from 'antd'
-import { CircleCheck, CircleX, Key, LoaderCircle, MousePointer, Save, Search, Square, SquareCheck } from 'lucide-react'
+import { CircleCheck, CircleX, Key, LoaderCircle, Save, Square, SquareCheck } from 'lucide-react'
 import { getListQuests } from '../../../api/Quest'
 import { getEvaluateByHosp, getListEvaluateByHosp, getListSubQuestsForEvaluate } from '../../../api/Evaluate'
 import { saveEvaluates } from '../../../api/Evaluate';
@@ -12,7 +12,7 @@ import { getSubQuestByID } from '../../../api/SubQuest';
 import axios from 'axios';
 
 
-const FormEvaluateInfraStructure = () => {
+const FormEvaluateInfraStructure_v2 = () => {
 
   const navigate = useNavigate()
   const user = useGlobalStore((state) => state.user)
@@ -42,6 +42,17 @@ const FormEvaluateInfraStructure = () => {
 
 
   const hcode = user.hcode
+  const catId = 1
+  const loadListEvaluate = async () => {
+    await getEvaluateByHosp(token, catId, hcode)
+      .then(res => {
+        console.log('Eva: ', res.data)
+        setListEvaluate(res.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
 
 
   const loadListQuest = async () => {
@@ -62,12 +73,14 @@ const FormEvaluateInfraStructure = () => {
     label: item.quest_name
   }))
 
+
+
   const selectQuest = async (id) => {
     setQuestId(id)
     setIsLoading(true)
     await getListSubQuestsForEvaluate(token, id)
       .then(res => {
-        console.log('Data: ', res.data)
+        // console.log('Data: ', res.data)
         setListSubQuest(res.data)
       })
       .catch(err => {
@@ -77,7 +90,7 @@ const FormEvaluateInfraStructure = () => {
 
     await getEvaluateByHosp(token, id, hcode)
       .then(res => {
-        console.log('Eva: ', res.data)
+        // console.log('Eva: ', res.data)
         setListEvaluate(res.data)
       })
       .catch(err => {
@@ -91,7 +104,7 @@ const FormEvaluateInfraStructure = () => {
 
   const dataSource = listSubQuest.map((item, k1) => ({ ...item, key: k1 }))
 
-  // const evaluate = listEvaluate.map((eva) => ({ ...eva }))
+  console.log(dataSource)
 
 
   const handleSubmit = async (fieldValue) => {
@@ -164,11 +177,11 @@ const FormEvaluateInfraStructure = () => {
     formData.append("category_questId", fieldValue.category_questId)
     formData.append("questId", fieldValue.questId)
     formData.append("sub_questId", fieldValue.sub_questId)
+    formData.append("check", fieldValue.check)
     formData.append("hcode", fieldValue.hcode)
-    formData.append("usersId", fieldValue.usersId)
+    formData.append("userId", fieldValue.userId)
 
-
-    await axios.post(import.meta.env.VITE_APP_API + `/saveEvidenceAll`, formData, {
+    await axios.post(import.meta.env.VITE_APP_API + `/saveEvaluates2`, formData, {
       headers: {
         Authorization: `Bearer ` + token,
         "Content-Type": "multipart/form-data"
@@ -202,7 +215,7 @@ const FormEvaluateInfraStructure = () => {
         sub_questId: itemId.id,
         sub_quest_name: itemId.sub_quest_name,
         hcode: user.hcode,
-        usersId: user.id
+        userId: user.id
       })
     }
   })
@@ -229,179 +242,67 @@ const FormEvaluateInfraStructure = () => {
           </div>
         </div>
         <Divider />
-        {
-          listEvaluate.length > 0
-            ?
-            <>
-              <div className='text-center'>
-                <Button onClick={()=> navigate('/smarthosp-quest/user/responder/report-hosp')}>
-                  <MousePointer /> ประเมินหัวข้อนี้แล้ว คลิกเพื่อตรวจสอบ
-                </Button>
+
+        <div>
+          <div className='my-2'>
+            <p
+              className='text-lg ml-4 font-bold text-yellow-900'
+            >
+              <u>{uniqueQuest}</u>
+            </p>
+          </div>
+
+          <div
+            className=''
+          >
+            <div className='grid grid-cols-7 ml-10 bg-slate-100 text-md text-slate-950'>
+              <div className='col-span-4 text-center border'>
+                <p className='font-bold p-2'>รายการ</p>
               </div>
-            </>
-            :
-            <>
-              <div>
-                <div className='my-2'>
-                  <p
-                    className='text-lg ml-4 font-bold text-yellow-900'
-                  >
-                    <u>{uniqueQuest}</u>
-                  </p>
-                </div>
-
-                <Form
-                  name='formEvaluate'
-                  form={formEvaluate}
-                  onFinish={handleSubmit}
-                >
-                  <div
-                    className=''
-                  >
-                    <div className='grid grid-cols-6 ml-10 bg-slate-100 text-md text-slate-950'>
-                      <div className='col-span-4 text-center border'>
-                        <p className='font-bold p-2'>รายการ</p>
-                      </div>
-                      {/* <div className='text-center border'>
-                      <p className='font-bold p-2'>จำเป็นดำเนินการ</p>
-                    </div> */}
-                      <div className='text-center border'>
-                        <p className='font-bold p-2'>คะแนนเต็ม</p>
-                      </div>
-                      <div className='text-center border'>
-                        <p className='font-bold p-2'>คะแนนจำเป็น</p>
-                      </div>
-                      {/* <div className='text-center border'>
-                      <p className='font-bold p-2'>ภาพหลักฐาน</p>
-                    </div> */}
+              {/* <div className='text-center border'>
+                  <p className='font-bold p-2'>จำเป็นดำเนินการ</p>
+                </div> */}
+              <div className='text-center border'>
+                <p className='font-bold p-2'>คะแนนเต็ม</p>
+              </div>
+              <div className='text-center border'>
+                <p className='font-bold p-2'>คะแนนจำเป็น</p>
+              </div>
+              <div className='text-center border'>
+                <p className='font-bold p-2'>ภาพหลักฐาน</p>
+              </div>
+            </div>
+            {
+              dataSource.map((item, k1) => (
+                <>
+                  <div className='grid grid-cols-7 ml-10'>
+                    <div className='col-span-4 border'>
+                      <p
+                        className='p-2 font-bold'
+                      >
+                        {item.sub_quest_name}
+                      </p>
                     </div>
-                    {
-                      dataSource.map((item, k1) => (
-                        <>
-                          <div className='grid grid-cols-6 ml-10'>
-                            <div key={k1} className='col-span-4 border'>
-                              <p
-                                className='p-2 font-bold'
-                              >
-                                {item.sub_quest_name}
-                              </p>
-                              <Form.Item
-                                name={'category_questId' + item.id}
-                                hidden={true}
-                                initialValue={item.category_questId}
-                              >
-                                <Input />
-                              </Form.Item>
-                              <Form.Item
-                                name={'questId' + item.id}
-                                hidden={true}
-                                initialValue={item.questId}
-                              >
-                                <Input />
-                              </Form.Item>
-                              <Form.Item
-                                name={'description' + item.id}
-                                initialValue={item.description}
-                                hidden={true}
-                              >
-                                <Input className='border-none' />
-                              </Form.Item>
-                              <Form.Item
-                                name={"check" + item.id}
-                                className='ml-16 mt-1'
-                              >
-                                <Radio.Group
-                                >
-                                  <Space direction='vertical'>
-                                    <Radio value="true" className='text-green-700'>มีการดำเนินการ</Radio>
-                                    <Radio value="false" className='text-red-700'>ไม่มีการดำเนินการ</Radio>
-                                  </Space>
-                                </Radio.Group>
-                              </Form.Item>
-
-                            </div>
-                            <div className='text-center border'>
-                              <Form.Item
-                                name={'sub_quest_total_point' + item.id}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: 'กรุณาระบุ'
-                                  }
-                                ]}
-                                initialValue={item.sub_quest_total_point}
-                                hidden={true}
-                                className='mt-1'
-                              >
-                                <InputNumber readOnly />
-                              </Form.Item>
-                              <p className='mt-6 font-bold'>{item.sub_quest_total_point}</p>
-                            </div>
-                            <div className='text-center border'>
-                              <Form.Item
-                                name={'sub_quest_require_point' + item.id}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: 'กรุณาระบุ'
-                                  }
-                                ]}
-                                initialValue={item.sub_quest_require_point}
-                                hidden={true}
-                                className='mt-1'
-                              >
-                                <InputNumber readOnly />
-                              </Form.Item>
-                              <Form.Item
-                                name={'hcode' + item.id}
-                                hidden={true}
-                                initialValue={user.hcode}
-                              >
-                                <Input />
-                              </Form.Item>
-                              <Form.Item
-                                name={'userId' + item.id}
-                                hidden={true}
-                                initialValue={user.id}
-                              >
-                                <Input />
-                              </Form.Item>
-                              <p className='mt-6 font-bold'>{item.sub_quest_require_point}</p>
-                            </div>
-                            {/* <div className='text-center border'>
-                            <div className='mt-5'>
-                                  <Button onClick={() => showFormUploadItem(item)}>
-                                    <UploadOutlined /> ประเมินผล
-                                  </Button>
-                            </div>
-                          </div> */}
-                          </div>
-                        </>
-                      ))
-                    }
-                  </div>
-                  <div className='flex justify-center space-x-1 mt-3'>
-                    <div>
-                      {
-                        listSubQuest.length > 0
-                          ?
-                          <Form.Item>
-                            <Button
-                              type='primary'
-                              htmlType='submit'
-                              style={{ width: 500 }}
-                            >
-                              <Save /> บันทึกผลการประเมิน
-                            </Button>
-                          </Form.Item>
-                          : null
-                      }
+                    <div className='text-center border'>
+                      <p className='mt-6 font-bold'>{item.sub_quest_total_point}</p>
+                    </div>
+                    <div className='text-center border'>
+                      <p className='mt-6 font-bold'>{item.sub_quest_require_point}</p>
+                    </div>
+                    <div className='text-center border'>
+                      <div className='mt-5'>
+                        <Button onClick={() => showFormUploadItem(item)}>
+                          ประเมินผล
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </Form>
-              </div>
-            </>
-        }
+                </>
+              ))
+            }
+          </div>
+        </div>
+
 
         <Modal
           title={
@@ -480,7 +381,7 @@ const FormEvaluateInfraStructure = () => {
           title={
             <div className='flex justify-center'>
               <ExclamationCircleFilled className='text-green-600' /> &nbsp;
-              <span className='text-xl font-bold'>แนบเอกสาร/หลักฐาน</span>
+              <span className='text-xl font-bold'>ประเมินผลด้านโครงสร้าง</span>
             </div>
           }
           open={uploadItemModal}
@@ -533,11 +434,11 @@ const FormEvaluateInfraStructure = () => {
               name='sub_quest_name'
               label={<b>เกณฑ์การประเมินย่อย</b>}
             >
-              <Input.TextArea rows={3} readOnly />
+              <Input.TextArea rows={7} readOnly />
             </Form.Item>
             <Form.Item
               name='hcode'
-              label={<b>รหัสหน่วยบริการ</b>}
+              label={<b>หน่วยบริการ</b>}
             >
               <Select
                 options={[
@@ -549,7 +450,18 @@ const FormEvaluateInfraStructure = () => {
               />
             </Form.Item>
             <Form.Item
-              name='usersId'
+              name='check'
+              label={<b>ตัวเลือกการประเมินผล</b>}
+            >
+              <Radio.Group>
+                <Space direction='vertical'>
+                  <Radio value="true" className='text-green-700'>มีการดำเนินการ</Radio>
+                  <Radio value="false" className='text-red-700'>ไม่มีการดำเนินการ</Radio>
+                </Space>
+              </Radio.Group>
+            </Form.Item>
+            <Form.Item
+              name='userId'
               label={<b>ผู้บันทึก</b>}
             >
               <Select
@@ -573,10 +485,10 @@ const FormEvaluateInfraStructure = () => {
             </Form.Item>
           </Form>
         </Modal>
-      </div >
+      </div>
 
-    </div >
+    </div>
   )
 }
 
-export default FormEvaluateInfraStructure
+export default FormEvaluateInfraStructure_v2

@@ -8,15 +8,76 @@ exports.saveEvaluates = async (req, res) => {
             category_questId: item.category_questId,
             questId: item.questId,
             sub_questId: item.sub_questId,
-            check: item.check,
+            check: String(item.check),
             hcode: item.hcode,
             userId: item.userId
         }))
 
         // console.log('Data: ', questValues)
 
-        await prisma.evaluate.createMany({
+        const saveData = await prisma.evaluate.createMany({
             data: questValues
+        })
+        if (saveData) {
+            const log = await prisma.evaluate.findMany({
+                where: { createdAt: new Date() },
+                select: {
+                    id: true,
+                    userId: true,
+                    hcode: true,
+                    hospitals: {
+                        select: {
+                            id: true,
+                            hcode: true,
+                            hname_th: true,
+                            provname: true,
+                            zone: true
+                        }
+                    }
+                }
+            })
+
+            const logValue = log.map((item2) => ({
+                evaluateId: item2.id,
+                usersId: Number(item2.userId),
+                hcode: item2.hcode,
+                province: item2.hospitals.provname,
+                zone: item2.hospitals.zone
+            }))
+
+            await prisma.log_evaluate.createMany({
+                data: logValue
+            })
+
+           
+        }
+        res.json({ message: `ประเมินผลสำเร็จ!` })
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Server Error!' })
+    }
+}
+
+
+exports.saveEvaluates2 = async (req, res) => {
+    try {
+        //Code
+        const data = req.body
+        data.file_name = req.file.filename
+
+        console.log('Data: ', data)
+
+        await prisma.evaluate.create({
+            data: {
+                category_questId: Number(data.category_questId),
+                questId: Number(data.questId),
+                sub_questId: Number(data.sub_questId),
+                check: String(data.check),
+                hcode: data.hcode,
+                userId: Number(data.userId),
+                file_name: data.file_name
+            }
         })
         res.json({ message: `ประเมินผลสำเร็จ!` })
 
@@ -25,6 +86,7 @@ exports.saveEvaluates = async (req, res) => {
         res.status(500).json({ message: 'Server Error!' })
     }
 }
+
 
 exports.getListEvaluateByHosp = async (req, res) => {
     try {
@@ -71,7 +133,7 @@ exports.getListEvaluateByHosp = async (req, res) => {
         // })
 
         const result = await prisma.$queryRaw`SELECT t1.id,t1.category_questId,t1.questId,t1.sub_questId,t3.sub_quest_name,
-                t1.check,t1.hcode,t2.id AS sub_quest_listId,t2.sub_quest_listname,t2.sub_quest_total_point,	
+                t1.check,t1.hcode,t1.file_name,t2.id AS sub_quest_listId,t2.sub_quest_listname,t2.sub_quest_total_point,	
                 t2.sub_quest_require_point,t2.description,t2.necessary,t1.createdAt,t1.updatedAt
                 FROM Evaluate t1 
                 LEFT JOIN Sub_quest_list t2 
@@ -82,6 +144,27 @@ exports.getListEvaluateByHosp = async (req, res) => {
 
         res.json(result)
 
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Server Error!' })
+    }
+}
+
+
+exports.getEvaluateByHosp = async (req, res) => {
+    try {
+        const { questId, hcode } = req.query
+        console.log(req.query)
+        const result = await prisma.evaluate.findMany({
+            where: {
+                AND: [
+                    { questId: Number(questId) },
+                    { hcode: hcode }
+                ]
+            }
+        })
+
+        res.json(result)
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: 'Server Error!' })
@@ -114,9 +197,11 @@ exports.getListEvaluateByProv = async (req, res) => {
         //Code
         const { province } = req.params
         const result = await prisma.evaluate.findMany({
-            where: { check: true },
             select: {
                 id: true,
+                file_name: true,
+                ssj_approve: true,
+                zone_approve: true,
                 category_quests: {
                     select: {
                         id: true,
@@ -133,14 +218,11 @@ exports.getListEvaluateByProv = async (req, res) => {
                 sub_quests: {
                     select: {
                         id: true,
-                        sub_quest_name: true
+                        sub_quest_name: true,
+                        sub_quest_lists: true
                     }
                 },
-                description: true,
-                necessary: true,
                 check: true,
-                sub_quest_total_point: true,
-                sub_quest_require_point: true,
                 users: {
                     select: {
                         id: true,
@@ -158,15 +240,17 @@ exports.getListEvaluateByProv = async (req, res) => {
                         ampname: true,
                         provname: true,
                         zone: true
-                    },
-                    where: {
+                    }
+                }
+            },
+            where: {
+                hospitals: {
+                    is: {
                         provname: province
                     }
                 }
             }
         })
-        // .$queryRaw`SELECT * FROM Evaluate LEFT JOIN Hospitals 
-        // ON Evaluate.hcode = Hospitals.hospital_code WHERE Hospitals.provname = ${province}`
 
         res.json(result)
 
@@ -262,7 +346,17 @@ exports.getEvaluateById = async (req, res) => {
                 sub_quests: {
                     select: {
                         id: true,
-                        sub_quest_name: true
+                        sub_quest_name: true,
+                        sub_quest_lists: {
+                            select: {
+                                id: true,
+                                sub_questId: true,
+                                sub_quest_listname: true,
+                                sub_quest_total_point: true,
+                                sub_quest_require_point: true,
+                                choice: true
+                            }
+                        }
                     }
                 }
             }
@@ -277,29 +371,25 @@ exports.getEvaluateById = async (req, res) => {
 }
 
 
-exports.updatePointEvaluate = async (req, res) => {
+exports.updateChoiceEvaluate = async (req, res) => {
     try {
         //Code
         const {
             id,
-            description,
-            sub_quest_total_point,
-            sub_quest_require_point,
+            check,
             userId
         } = req.body
 
         await prisma.evaluate.update({
             where: { id: Number(id) },
             data: {
-                description,
-                sub_quest_total_point,
-                sub_quest_require_point,
+                check,
                 userId,
                 updatedAt: new Date()
             }
         })
 
-        res.json({ message: `แก้ไขคะแนนสำเร็จ!` })
+        res.json({ message: `แก้ไขคำตอบสำเร็จ!` })
 
     } catch (err) {
         console.log(err)
@@ -376,11 +466,51 @@ exports.saveEvidenceAll = async (req, res) => {
 }
 
 
-exports.getDocumentsFromEvaluate = async (req, res) => {
+exports.uploadFileById = async (req, res) => {
     try {
         //Code
-        // const result = await prisma.evidence_document.findMany()
-        // res.json(result)
+        const data = req.body
+        data.file_name = req.file.filename
+
+        console.log(data)
+
+        await prisma.evaluate.update({
+            where: { id: Number(req.params.id) },
+            data: {
+                file_name: data.file_name
+            }
+        })
+
+        res.json({ message: `เพิ่มข้อมูลสำเร็จ!` })
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).send({ message: "ต้องเป็นไฟล์นามสกุล .png หรือ .jpg หรือ .pdf เท่านั้น!!" })
+    }
+}
+
+
+exports.getEvidenceFromEvaluate = async (req, res) => {
+    try {
+        // Code
+        const { id, hcode } = req.query
+        console.log(req.query)
+        const result = await prisma.evaluate.findFirst({
+            where: {
+                AND: [
+                    { id: Number(id) },
+                    { hcode: hcode }
+                ]
+            }
+        })
+        // const result = await prisma.$queryRaw`SELECT t1.id AS evidenceId, t1.category_questId, t1.questId, t1.sub_questId,
+        //                     t1.file_name, t1.hcode, t1.usersId, t1.createdAt, t1.updatedAt,	t2.id AS evaluateId
+        //                 FROM Evidence_all AS t1 LEFT JOIN Evaluate AS t2
+        //                 ON t1.category_questId = t2.category_questId AND t1.questId = t2.questId 
+        //                 AND t1.sub_questId = t2.sub_questId AND t1.hcode = t2.hcode
+        //                 WHERE t2.id = ${Number(id)} AND t1.hcode = ${hcode}`
+
+        res.json(result)
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: 'Server Error!' })
@@ -411,3 +541,28 @@ exports.getDocumentsByEvaluateByHosp = async (req, res) => {
     }
 }
 
+
+exports.ssjChangeStatusApprove = async (req, res) => {
+    try {
+        //Code
+        const { id, ssj_approve } = req.body
+        console.log(req.body)
+
+        await prisma.evaluate.update({
+            where: { id: Number(id) },
+            data: {
+                ssj_approve: ssj_approve,
+                updatedAt: new Date()
+            }
+        })
+
+        res.json({
+            message: `Aprove หัวข้อประเมินนี้เรียบร้อย!`
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Sever error!"
+        })
+    }
+}

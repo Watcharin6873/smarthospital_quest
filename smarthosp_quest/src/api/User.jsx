@@ -72,3 +72,24 @@ export const removeUser = async (token, id) =>{
         }
     )
 }
+
+
+export const sumApproveUserOnProv = async (token, province) =>{
+    return await axios.get(import.meta.env.VITE_APP_API + `/sumApproveUserOnProv/`+ province,
+        {
+            headers:{
+                Authorization: `Bearer ` + token
+            }
+        }
+    )
+}
+
+export const sumNotApproveUserOnProv = async (token, province) =>{
+    return await axios.get(import.meta.env.VITE_APP_API + `/sumNotApproveUserOnProv/`+ province,
+        {
+            headers:{
+                Authorization: `Bearer ` + token
+            }
+        }
+    )
+}

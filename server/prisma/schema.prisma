@@ -8,42 +8,41 @@ datasource db {
 }
 
 model Users {
-  id            Int            @id @default(autoincrement())
-  email         String
-  title_th      String
-  firstname_th  String
-  lastname_th   String
-  hcode         String
-  hname_th      String
-  position_id   String
-  position      String
-  sub_district  String
-  district      String
-  province      String
-  zone          String
-  role          String         @default("user")
-  level         Int
-  objective     String
-  enabled       Boolean        @default(false)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  approve_ssjs  Approve_ssj[]
-  approve_zones Approve_zone[]
-  documents     Documents[]
-  evaluates     Evaluate[]
-  evidence_alls Evidence_all[]
+  id               Int                @id @default(autoincrement())
+  email            String
+  title_th         String
+  firstname_th     String
+  lastname_th      String
+  hcode            String
+  hname_th         String
+  position_id      String
+  position         String
+  sub_district     String
+  district         String
+  province         String
+  zone             String
+  role             String             @default("user")
+  level            Int
+  objective        String
+  enabled          Boolean            @default(false)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  documents        Documents[]
+  evaluates        Evaluate[]
+  log_ssj_approve  Log_ssj_approve[]
+  log_zone_approve Log_zone_approve[]
+  log_evaluate     Log_evaluate[]
 }
 
 model Category_quest {
-  id                Int            @id @default(autoincrement())
+  id                Int         @id @default(autoincrement())
   category_name_th  String
   category_name_eng String
   fiscal_year       String
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
   documents         Documents[]
   evaluates         Evaluate[]
-  evidence_alls     Evidence_all[]
   quests            Quest[]
   sub_quests        Sub_quest[]
 }
@@ -55,7 +54,6 @@ model Quest {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   evaluates        Evaluate[]
-  evidence_alls    Evidence_all[]
   category_quests  Category_quest @relation(fields: [category_questId], references: [id])
   sub_quest        Sub_quest[]
 
@@ -74,7 +72,6 @@ model Sub_quest {
   createdAt               DateTime         @default(now())
   updatedAt               DateTime         @updatedAt
   evaluates               Evaluate[]
-  evidence_alls           Evidence_all[]
   category_quests         Category_quest   @relation(fields: [category_questId], references: [id])
   quests                  Quest            @relation(fields: [questId], references: [id])
   sub_quest_lists         Sub_quest_list[]
@@ -109,10 +106,11 @@ model Evaluate {
   check            String
   hcode            String
   userId           Int
+  file_name        String?
+  ssj_approve      Boolean         @default(false)
+  zone_approve     Boolean         @default(false)
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
-  approve_ssjs     Approve_ssj[]
-  approve_zones    Approve_zone[]
   category_quests  Category_quest  @relation(fields: [category_questId], references: [id])
   hospitals        Hospitals       @relation(fields: [hcode], references: [hcode])
   quests           Quest           @relation(fields: [questId], references: [id])
@@ -143,58 +141,46 @@ model Documents {
   @@index([usersId], map: "Documents_usersId_fkey")
 }
 
-model Evidence_all {
-  id               Int            @id @default(autoincrement())
-  category_questId Int
-  questId          Int
-  sub_questId      Int
-  file_name        String
-  hcode            String
-  usersId          Int
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  Category_quest   Category_quest @relation(fields: [category_questId], references: [id])
-  Quest            Quest          @relation(fields: [questId], references: [id])
-  Sub_quest        Sub_quest      @relation(fields: [sub_questId], references: [id])
-  users            Users          @relation(fields: [usersId], references: [id])
-
-  @@index([category_questId], map: "Evidence_all_category_questId_fkey")
-  @@index([questId], map: "Evidence_all_questId_fkey")
-  @@index([sub_questId], map: "Evidence_all_sub_questId_fkey")
-  @@index([usersId], map: "Evidence_all_usersId_fkey")
-}
-
-model Approve_ssj {
-  id           Int      @id @default(autoincrement())
-  evaluateId   Int
-  usersId      Int
-  hcode        String
-  province     String
-  zone         String
-  description  String?
-  ssj_approved Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  evaluates    Evaluate @relation(fields: [evaluateId], references: [id])
-  users        Users    @relation(fields: [usersId], references: [id])
+model Log_ssj_approve {
+  id         Int      @id @default(autoincrement())
+  evaluateId Int
+  usersId    Int
+  hcode      String
+  province   String?
+  zone       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  users      Users    @relation(fields: [usersId], references: [id])
 
   @@index([evaluateId], map: "Approve_ssj_evaluateId_fkey")
   @@index([usersId], map: "Approve_ssj_usersId_fkey")
 }
 
-model Approve_zone {
-  id            Int      @id @default(autoincrement())
-  evaluateId    Int
-  usersId       Int
-  hcode         String
-  province      String
-  zone          String
-  description   String?
-  zone_approved Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  evaluates     Evaluate @relation(fields: [evaluateId], references: [id])
-  users         Users    @relation(fields: [usersId], references: [id])
+model Log_zone_approve {
+  id         Int      @id @default(autoincrement())
+  evaluateId Int
+  usersId    Int
+  hcode      String
+  province   String?
+  zone       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  users      Users    @relation(fields: [usersId], references: [id])
+
+  @@index([evaluateId], map: "Approve_zone_evaluateId_fkey")
+  @@index([usersId], map: "Approve_zone_usersId_fkey")
+}
+
+model Log_evaluate {
+  id         Int      @id @default(autoincrement())
+  evaluateId Int
+  usersId    Int
+  hcode      String
+  province   String?
+  zone       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  users      Users    @relation(fields: [usersId], references: [id])
 
   @@index([evaluateId], map: "Approve_zone_evaluateId_fkey")
   @@index([usersId], map: "Approve_zone_usersId_fkey")
