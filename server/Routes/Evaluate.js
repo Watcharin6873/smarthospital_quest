@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const {
     saveEvaluates,
+    getListEvaluateAll,
     getEvaluateByHosp,
     getListEvaluateByHosp,
     getListEvaluateByProv,
@@ -17,7 +18,8 @@ const {
     sumEvaluateByHosp,
     saveEvaluates2,
     uploadFileById,
-    ssjChangeStatusApprove
+    ssjChangeStatusApprove,
+    zoneChangeStatusApprove
 } = require('../Controllers/Evaluate')
 const {authCheck} = require('../Middleware/Auth')
 const {uploadFile} = require('../Middleware/UploadFile')
@@ -25,6 +27,8 @@ const {uploadAllTypeFile} = require('../Middleware/UploadAllTypeFile')
 
 
 router.post('/saveEvaluates',authCheck, saveEvaluates)
+
+router.get('/getListEvaluateAll', getListEvaluateAll)
 
 router.post('/saveEvaluates2',authCheck, uploadAllTypeFile, saveEvaluates2)
 
@@ -51,6 +55,8 @@ router.post('/saveEvidenceAll',authCheck, uploadAllTypeFile, saveEvidenceAll)
 router.put('/uploadFileById/:id',authCheck, uploadAllTypeFile, uploadFileById)
 
 router.put('/ssjChangeStatusApprove',authCheck, ssjChangeStatusApprove)
+
+router.put('/zoneChangeStatusApprove',authCheck, zoneChangeStatusApprove)
 
 router.get('/getEvidenceFromEvaluate', authCheck, getEvidenceFromEvaluate)
 

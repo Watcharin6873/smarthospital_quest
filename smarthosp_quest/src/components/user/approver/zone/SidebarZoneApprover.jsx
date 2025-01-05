@@ -102,7 +102,7 @@ const SidebarZoneApprover = () => {
                     }
                 >
                     <ListTodo className='mr-2' />
-                    Approve ด้านการบริหาร
+                    Approve ด้านการบริการ
                 </NavLink>
                 <NavLink
                     to={'zone-approve-people'}

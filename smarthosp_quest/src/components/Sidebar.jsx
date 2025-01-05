@@ -30,6 +30,18 @@ const Sidebar = () => {
           <LayoutDashboard className='mr-2' />
           Dashboard
         </NavLink>
+        {/* <NavLink
+          to={'results'}
+          end
+          className={({ isActive }) =>
+            isActive
+              ? ' text-sm bg-green-900 rounded-md text-white px-4 py-2 flex items-center'
+              : ' text-sm text-gray-300 px-4 py-2 hover:bg-green-700 hover:text-white rounded flex items-center'
+          }
+        >
+          <LayoutDashboard className='mr-2' />
+          ประกาศผล
+        </NavLink> */}
         <NavLink
           to={'register'}
           className={({ isActive }) =>

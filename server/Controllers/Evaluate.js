@@ -191,6 +191,65 @@ exports.sumEvaluateByHosp = async (req, res) => {
     }
 }
 
+exports.getListEvaluateAll = async (req, res) => {
+    try {
+        //Code
+        const result = await prisma.evaluate.findMany({
+            select: {
+                id: true,
+                file_name: true,
+                ssj_approve: true,
+                zone_approve: true,
+                category_quests: {
+                    select: {
+                        id: true,
+                        category_name_th: true,
+                        fiscal_year: true
+                    }
+                },
+                quests: {
+                    select: {
+                        id: true,
+                        quest_name: true
+                    }
+                },
+                sub_quests: {
+                    select: {
+                        id: true,
+                        sub_quest_name: true,
+                        sub_quest_lists: true
+                    }
+                },
+                check: true,
+                users: {
+                    select: {
+                        id: true,
+                        firstname_th: true,
+                        lastname_th: true
+                    }
+                },
+                hcode: true,
+                hospitals: {
+                    select: {
+                        id: true,
+                        hcode: true,
+                        hname_th: true,
+                        tmbname: true,
+                        ampname: true,
+                        provname: true,
+                        zone: true
+                    }
+                }
+            }
+        })
+
+        res.json(result)
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Server Error!' })
+    }
+}
 
 exports.getListEvaluateByProv = async (req, res) => {
     try {
@@ -265,8 +324,70 @@ exports.getListEvaluateByZone = async (req, res) => {
     try {
         //Code
         const { zone } = req.params
-        const result = await prisma.$queryRaw`SELECT * FROM Evaluate LEFT JOIN Hospitals 
-        ON Evaluate.hcode = Hospitals.hospital_code WHERE Hospitals.zone = ${zone}`
+        const result = await prisma.evaluate.findMany({
+            select: {
+                id: true,
+                file_name: true,
+                ssj_approve: true,
+                zone_approve: true,
+                category_questId: true,
+                category_quests: {
+                    select: {
+                        id: true,
+                        category_name_th: true,
+                        fiscal_year: true
+                    }
+                },
+                questId: true,
+                quests: {
+                    select: {
+                        id: true,
+                        quest_name: true
+                    }
+                },
+                sub_questId: true,
+                sub_quests: {
+                    select: {
+                        id: true,
+                        sub_quest_name: true,
+                        sub_quest_lists: true
+                    }
+                },
+                check: true,
+                userId: true,
+                users: {
+                    select: {
+                        id: true,
+                        firstname_th: true,
+                        lastname_th: true
+                    }
+                },
+                hcode: true,
+                hospitals: {
+                    select: {
+                        id: true,
+                        hcode: true,
+                        hname_th: true,
+                        tmbname: true,
+                        ampname: true,
+                        provcode: true,
+                        provname: true,
+                        zone: true
+                    }
+                }
+            },
+            where: {
+                hospitals: {
+                    is: {
+                        zone: zone
+                    }
+                }
+            }
+        })
+        
+        // .$queryRaw`SELECT * FROM Evaluate LEFT JOIN Hospitals 
+        // ON Evaluate.hcode = Hospitals.hcode JOIN Sub_quest_list ON Evaluate.sub_questId = Sub_quest_list.sub_questId 
+        // AND Evaluate.check = Sub_quest_list.choice JOIN Sub_quest ON Evaluate.sub_questId = Sub_quest.id WHERE Hospitals.zone = ${zone}`
 
         res.json(result)
 
@@ -552,6 +673,32 @@ exports.ssjChangeStatusApprove = async (req, res) => {
             where: { id: Number(id) },
             data: {
                 ssj_approve: ssj_approve,
+                updatedAt: new Date()
+            }
+        })
+
+        res.json({
+            message: `Aprove หัวข้อประเมินนี้เรียบร้อย!`
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Sever error!"
+        })
+    }
+}
+
+
+exports.zoneChangeStatusApprove = async (req, res) => {
+    try {
+        //Code
+        const { id, zone_approve } = req.body
+        console.log(req.body)
+
+        await prisma.evaluate.update({
+            where:{id: Number(id)},
+            data:{
+                zone_approve: zone_approve,
                 updatedAt: new Date()
             }
         })

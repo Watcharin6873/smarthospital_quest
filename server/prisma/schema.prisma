@@ -29,9 +29,9 @@ model Users {
   updatedAt        DateTime           @updatedAt
   documents        Documents[]
   evaluates        Evaluate[]
+  log_evaluate     Log_evaluate[]
   log_ssj_approve  Log_ssj_approve[]
   log_zone_approve Log_zone_approve[]
-  log_evaluate     Log_evaluate[]
 }
 
 model Category_quest {

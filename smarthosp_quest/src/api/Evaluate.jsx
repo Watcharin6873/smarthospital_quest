@@ -1,6 +1,11 @@
 import axios from "axios";
 
 
+//Get Evaluate all
+export const getListEvaluateAll = async () =>{
+    return await axios.get(import.meta.env.VITE_APP_API + `/getListEvaluateAll`)
+}
+
 //Get List SubQuest
 export const getListSubQuestsForEvaluate = async (token, values) => {
     return await axios.get(import.meta.env.VITE_APP_API + `/getListSubQuestsForEvaluate/` + values,
@@ -142,7 +147,7 @@ export const getDocumentsFromEvaluate = async (token) => {
 }
 
 //get documents of evaluate
-export const getDocumentByEvaluateByHosp = async (token, hcode, values) => {
+export const getDocumentByEvaluateByHosp = async (token,values, hcode) => {
     return await axios.get(import.meta.env.VITE_APP_API + `/getDocumentsByEvaluateByHosp?category_questId=${values}&hcode=${hcode}`,
         {
             headers: {
@@ -179,6 +184,17 @@ export const uploadFileById = async (token, id, values) => {
 //ssj approve 
 export const ssjChangeStatusApprove = async (token, values) => {
     return await axios.put(import.meta.env.VITE_APP_API + `/ssjChangeStatusApprove`, values,
+        {
+            headers: {
+                Authorization: `Bearer ` + token,
+            }
+        }
+    )
+}
+
+//ssj approve 
+export const zoneChangeStatusApprove = async (token, values) => {
+    return await axios.put(import.meta.env.VITE_APP_API + `/zoneChangeStatusApprove`, values,
         {
             headers: {
                 Authorization: `Bearer ` + token,

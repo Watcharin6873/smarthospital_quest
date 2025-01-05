@@ -5,6 +5,7 @@ import { getDocumentByEvaluateByHosp, getListEvaluateByProv, ssjChangeStatusAppr
 import { Button, Checkbox, Divider, Image, Select, Switch } from 'antd'
 import { SnippetsOutlined } from '@ant-design/icons'
 import { toast } from 'react-toastify'
+import { getListQuests } from '../../../../api/Quest'
 
 const FormApproveManagement_SSJ = () => {
 
@@ -14,6 +15,7 @@ const FormApproveManagement_SSJ = () => {
 
   const [isLoading, setIsLoading] = useState(false)
   const [evaluateByProv, setEvaluateByProv] = useState([])
+  const [listQuests, setListQuests] = useState([])
   const [searchQuery, setSearchQuery] = useState([])
   const [documentFile, setDocumentFile] = useState()
   const [hospcode, setHospcode] = useState(null)
@@ -25,6 +27,18 @@ const FormApproveManagement_SSJ = () => {
   useEffect(() => {
     loadListEvaluateByProve(token)
   }, [])
+
+
+  const loadListQuests = async () =>{
+    await getListQuests(token)
+      .then(res=>{
+        setListQuests(res.data)
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+  }
+
 
   const loadListEvaluateByProve = async () => {
     await getListEvaluateByProv(token, province)
@@ -41,19 +55,17 @@ const FormApproveManagement_SSJ = () => {
 
   const uniqueData = [...new Map(category2.map(item => [item.hospitals['hcode', 'hname_th'], item])).values()]
 
-  // console.log("List: ", uniqueData)
 
   const optionSelectHosp = uniqueData.map((item) => ({
     value: item.hcode,
     label: item.hospitals.hname_th + ' [' + item.hcode + ']'
   }))
 
-
-
   const uniqueCatId = 2
 
   const selectHospital = (e) => {
     setHospcode(e)
+    loadListQuests(token)
     setSearchQuery(category2.filter(f => f.hcode === e))
     getDocumentByEvaluateByHosp(token, uniqueCatId, e)
       .then(res => {
@@ -65,7 +77,7 @@ const FormApproveManagement_SSJ = () => {
       })
   }
 
-  const listQuest = [...new Map(searchQuery.map(item => [item.quests["quest_name"], item])).values()]
+  const searchQuests = listQuests.filter(f=>f.category_questId === 2)
 
   const changeStatusApprove = async (e, id) => {
     console.log(e, id)
@@ -143,21 +155,21 @@ const FormApproveManagement_SSJ = () => {
             </thead>
             <tbody>
               {
-                listQuest.map((item2, k2) =>
+                searchQuests.map((item2, k2) =>
                   <>
                     <tr key={k2} className='border-b border-l border-r'>
                       <td colSpan={5}>
                         <p
                           className='ml-1 p-1 font-bold'
-                          style={{ fontSize: '20px' }}
+                          style={{ fontSize: '18px' }}
                         >
-                          <u>{item2.quests.quest_name}</u>
+                          <u>{item2.quest_name}</u>
                         </p>
                       </td>
                     </tr>
                     {
                       searchQuery.map((item1, k1) => (
-                        item1.quests.quest_name === item2.quests.quest_name
+                        item1.quests.quest_name === item2.quest_name
                           ?
                           <>
                             <tr key={k1} className='border-neutral-200 dark:border-white/10 border-b border-l border-r'>

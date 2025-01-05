@@ -74,8 +74,8 @@ export const removeUser = async (token, id) =>{
 }
 
 
-export const sumApproveUserOnProv = async (token, province) =>{
-    return await axios.get(import.meta.env.VITE_APP_API + `/sumApproveUserOnProv/`+ province,
+export const approveUserOnProv = async (token, province) =>{
+    return await axios.get(import.meta.env.VITE_APP_API + `/approveUserOnProv/`+ province,
         {
             headers:{
                 Authorization: `Bearer ` + token
@@ -84,8 +84,28 @@ export const sumApproveUserOnProv = async (token, province) =>{
     )
 }
 
-export const sumNotApproveUserOnProv = async (token, province) =>{
-    return await axios.get(import.meta.env.VITE_APP_API + `/sumNotApproveUserOnProv/`+ province,
+export const notApproveUserOnProv = async (token, province) =>{
+    return await axios.get(import.meta.env.VITE_APP_API + `/notApproveUserOnProv/`+ province,
+        {
+            headers:{
+                Authorization: `Bearer ` + token
+            }
+        }
+    )
+}
+
+export const approveUserOnZone = async (token, zone) =>{
+    return await axios.get(import.meta.env.VITE_APP_API + `/approveUserOnZone/`+ zone,
+        {
+            headers:{
+                Authorization: `Bearer ` + token
+            }
+        }
+    )
+}
+
+export const notApproveUserOnZone = async (token, zone) =>{
+    return await axios.get(import.meta.env.VITE_APP_API + `/notApproveUserOnZone/`+ zone,
         {
             headers:{
                 Authorization: `Bearer ` + token

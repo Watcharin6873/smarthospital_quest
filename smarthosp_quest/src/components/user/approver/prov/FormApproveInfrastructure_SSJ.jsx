@@ -8,6 +8,7 @@ import { EyeOutlined, SnippetsOutlined } from '@ant-design/icons'
 import { changeStatus } from '../../../../api/User'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import { getListQuests } from '../../../../api/Quest'
 
 const FormApproveInfrastructure_SSJ = () => {
 
@@ -15,6 +16,7 @@ const FormApproveInfrastructure_SSJ = () => {
   const user = useGlobalStore((state) => state.user)
   const token = useGlobalStore((state) => state.token)
   const [isLoading, setIsLoading] = useState(false)
+  const [listQuests, setListQuests] = useState([])
   const [evaluateByProv, setEvaluateByProv] = useState([])
   const [searchQuery, setSearchQuery] = useState([])
   const [documentFile, setDocumentFile] = useState()
@@ -27,12 +29,22 @@ const FormApproveInfrastructure_SSJ = () => {
     loadListEvaluateByProve(token, province)
   }, [])
 
+  const loadListQuests = async () =>{
+    await getListQuests(token)
+      .then(res=>{
+        setListQuests(res.data)
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+  }
+
 
   const loadListEvaluateByProve = () => {
     setIsLoading(true)
     getListEvaluateByProv(token, province)
       .then(res => {
-        console.log(res.data)
+        // console.log(res.data)
         setEvaluateByProv(res.data)
       })
       .catch(err => {
@@ -58,6 +70,7 @@ const FormApproveInfrastructure_SSJ = () => {
 
   const selectHospital = (e) => {
     setHospcode(e)
+    loadListQuests(token)
     setSearchQuery(category1.filter(f => f.hcode === e))
     getDocumentsByEvaluateByHosp(token, uniqueCatId, e)
       .then(res => {
@@ -69,14 +82,9 @@ const FormApproveInfrastructure_SSJ = () => {
       })
   }
 
-  console.log('Hosp: ', hospcode)
 
-
-  const listQuest = [...new Map(searchQuery.map(item => [item.quests["quest_name"], item])).values()]
-
-
-  // console.log('Data: ', documentFile)
-  // console.log('Data: ', uniqueCatId)
+  const searchQuests = listQuests.filter(f=> f.category_questId === 1)
+  console.log('Quest: ', searchQuests)
 
   const changeStatusApprove = (e, id) => {
     console.log(e, id)
@@ -154,21 +162,21 @@ const FormApproveInfrastructure_SSJ = () => {
             </thead>
             <tbody>
               {
-                listQuest.map((item2, k2) =>
+                searchQuests.map((item2, k2) =>
                   <>
                     <tr key={k2} className='border-b border-l border-r'>
                       <td colSpan={5}>
                         <p
                           className='ml-1 p-1 font-bold'
-                          style={{ fontSize: '20px' }}
+                          style={{ fontSize: '18px' }}
                         >
-                          <u>{item2.quests.quest_name}</u>
+                          <u>{item2.quest_name}</u>
                         </p>
                       </td>
                     </tr>
                     {
                       searchQuery.map((item1, k1) => (
-                        item1.quests.quest_name === item2.quests.quest_name
+                        item1.quests.quest_name === item2.quest_name
                           ?
                           <>
                             <tr key={k1} className='border-neutral-200 dark:border-white/10 border-b border-l border-r'>

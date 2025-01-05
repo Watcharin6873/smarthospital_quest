@@ -49,39 +49,28 @@ const FormReportProv = () => {
 
   return (
     <div>
-      <div className='text-center mb-3'>
-        <p className='text-3xl text-green-900'>รายงานผลการประเมิน</p>
+
+      <div className='flex justify-center items-center text-2xl font-bold mb-8 text-green-600'>
+        <p className='ml-2'>รายงานผลการประเมิน</p>
       </div>
 
       <div className='bg-white rounded-md shadow-md p-3'>
         <table className='w-full text-left table-fixed text-slate-800'>
           <thead>
-            <tr className='text-md text-slate-500 border border-l border-r border-slate-300 bg-slate-50'>
-              <th className='text-center p-4 border-r'>หน่วยบริการ</th>
-              <th className='text-center p-4 border-r'>ที่อยู่</th>
-              <th className='text-center p-4 border-r w-32'>เขตสุขภาพ</th>
-              <th className='text-center p-4 border-r w-40'>ประเภท</th>
+            <tr className='text-md text-slate-500 border border-l border-r border-slate-300 bg-slate-200'>
+              <th className='text-center p-2 border-r'>หน่วยบริการที่อยู่ในจังหวัด{province}</th>
+              <th className='text-center p-2 border-r w-40'>ประเภท</th>
             </tr>
           </thead>
           {
             listHospitals.map((item1, k1) => (
               <tbody>
-                <tr className='cursor-pointer hover:bg-slate-50' key={k1} onClick={() => handleExpandedRow(k1)}>
+                <tr className='cursor-pointer bg-slate-100 hover:bg-slate-50' key={k1} onClick={() => handleExpandedRow(k1)}>
                   <td className='border p-1 text-stone-800'>
                     <div className='flex gap-1 pl-4'>
                       <p className='text-sm'>{item1.hname_th}</p>
                       <p className='text-sm'>[{item1.hcode}]</p>
                     </div>
-                  </td>
-                  <td className='border p-1 text-stone-800'>
-                    <div className='flex gap-2 pl-4'>
-                      <p className='text-sm'>ต.{item1.tmbname}</p>
-                      <p className='text-sm'>อ.{item1.ampname}</p>
-                      <p className='text-sm'>จ.{item1.provname}</p>
-                    </div>
-                  </td>
-                  <td className='border text-center p-1 text-stone-800'>
-                    <p className='text-sm'>{item1.zone}</p>
                   </td>
                   <td className='border text-center p-1 text-stone-800'>
                     <p className='text-sm'>{item1.typename}</p>
@@ -90,10 +79,57 @@ const FormReportProv = () => {
                 {expandedRows === k1 ? (
                   <tr>
                     <td
-                      colSpan={4}
-                      className='text-center text-orange-500'
+                      colSpan={2}
+                      className='text-center border'
                     >
-                      ส่วนนี้จะแสดงข้อมูลการประเมินของ{item1.hname_th} [{item1.hcode}]
+                      <table className='w-full table-fixed text-slate-700'>
+                        <thead className='bg-gray-100'>
+                          <tr>
+                            <th colSpan={2} className='text-xs text-center border w-52'>ด้านโครงสร้าง</th>
+                            <th colSpan={2} className='text-xs text-center border w-52'>ด้านบริหารจัดการ</th>
+                            <th colSpan={2} className='text-xs text-center border w-52'>ด้านการบริการ</th>
+                            <th colSpan={2} className='text-xs text-center border w-52'>ด้านบุคลากร</th>
+                          </tr>
+                          <tr>
+                            <th className='text-xs text-center border'>คะแนนเต็ม</th>
+                            <th className='text-xs text-center border'>คะแนนจำเป็น</th>
+                            <th className='text-xs text-center border'>คะแนนเต็ม</th>
+                            <th className='text-xs text-center border'>คะแนนจำเป็น</th>
+                            <th className='text-xs text-center border'>คะแนนเต็ม</th>
+                            <th className='text-xs text-center border'>คะแนนจำเป็น</th>
+                            <th className='text-xs text-center border'>คะแนนเต็ม</th>
+                            <th className='text-xs text-center border'>คะแนนจำเป็น</th>
+                          </tr>
+                        </thead>
+                        <tbody className='bg-gray-50'>
+                          <tr className='text-xs'>
+                            <td className='border text-center'>
+                              <p>0</p>
+                            </td>
+                            <td className='border text-center'>
+                              <p>0</p>
+                            </td>
+                            <td className='border text-center'>
+                              <p>0</p>
+                            </td>
+                            <td className='border text-center'>
+                              <p>0</p>
+                            </td>
+                            <td className='border text-center'>
+                              <p>0</p>
+                            </td>
+                            <td className='border text-center'>
+                              <p>0</p>
+                            </td>
+                            <td className='border text-center'>
+                              <p>0</p>
+                            </td>
+                            <td className='border text-center'>
+                              <p>0</p>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </td>
                   </tr>
                 ) : null}

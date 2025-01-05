@@ -103,7 +103,7 @@ const SidebarProvApprover = () => {
                     }
                 >
                     <ListTodo className='mr-2' />
-                    Approve ด้านการบริหาร
+                    Approve ด้านการบริการ
                 </NavLink>
                 <NavLink
                     to={'ssj-approve-people'}
