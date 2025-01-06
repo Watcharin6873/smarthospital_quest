@@ -13,7 +13,8 @@ import {
     LogOut,
     BookCheck,
     Monitor,
-    MonitorCheck
+    MonitorCheck,
+    ShieldCheck
 } from 'lucide-react'
 import useGlobalStore from '../../../store/global-store'
 import { ExclamationCircleFilled } from '@ant-design/icons'
@@ -108,6 +109,17 @@ const SidebarUserResponder = () => {
                 >
                     <ListChecks className='mr-2' />
                     ประเมินด้านบุคลากร
+                </NavLink>
+                <NavLink
+                    to={'cyber-check'}
+                    className={({ isActive }) =>
+                        isActive
+                            ? ' text-sm bg-green-900 rounded-md text-white px-4 py-2 flex items-center'
+                            : ' text-sm text-gray-300 px-4 py-2 hover:bg-green-700 hover:text-white rounded flex items-center'
+                    }
+                >
+                    <ShieldCheck className='mr-2' />
+                    ระดับ Cyber Security ศทส.
                 </NavLink>
                 <NavLink
                     to={'report-hosp'}

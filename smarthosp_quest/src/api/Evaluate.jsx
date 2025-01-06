@@ -202,3 +202,27 @@ export const zoneChangeStatusApprove = async (token, values) => {
         }
     )
 }
+
+//Upload cyber image data
+export const uploadCyberImage = async (token, values) => {
+    return await axios.post(import.meta.env.VITE_APP_API + `/uploadCyberImageFile`, values,
+        {
+            headers: {
+                Authorization: `Bearer ` + token,
+                "Content-Type": "multipart/form-data"
+            }
+        }
+    )
+}
+
+
+//Get cyber image data
+export const getCyberImageData = async (token, hcode) => {
+    return await axios.get(import.meta.env.VITE_APP_API + `/getCyberImageData?hcode=${hcode}`,
+        {
+            headers: {
+                Authorization: `Bearer ` + token
+            }
+        }
+    )
+}

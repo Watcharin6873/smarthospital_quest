@@ -11,7 +11,8 @@ import {
   NotebookText,
   Send,
   LogOut,
-  BookCheck
+  BookCheck,
+  ShieldCheck
 } from 'lucide-react'
 import useGlobalStore from '../../store/global-store'
 import { ExclamationCircleFilled } from '@ant-design/icons'

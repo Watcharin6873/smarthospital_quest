@@ -19,44 +19,51 @@ const {
     saveEvaluates2,
     uploadFileById,
     ssjChangeStatusApprove,
-    zoneChangeStatusApprove
+    zoneChangeStatusApprove,
+    uploadCyberImageFile,
+    getCyberImageData
 } = require('../Controllers/Evaluate')
-const {authCheck} = require('../Middleware/Auth')
-const {uploadFile} = require('../Middleware/UploadFile')
-const {uploadAllTypeFile} = require('../Middleware/UploadAllTypeFile')
+const { authCheck } = require('../Middleware/Auth')
+const { uploadFile } = require('../Middleware/UploadFile')
+const { uploadAllTypeFile } = require('../Middleware/UploadAllTypeFile')
+const { uploadCyberImage } = require('../Middleware/UploadCyberImage')
 
 
-router.post('/saveEvaluates',authCheck, saveEvaluates)
+router.post('/saveEvaluates', authCheck, saveEvaluates)
 
 router.get('/getListEvaluateAll', getListEvaluateAll)
 
-router.post('/saveEvaluates2',authCheck, uploadAllTypeFile, saveEvaluates2)
+router.post('/saveEvaluates2', authCheck, uploadAllTypeFile, saveEvaluates2)
 
-router.get('/getListEvaluateByHosp/:hcode',authCheck, getListEvaluateByHosp)
+router.post('/uploadCyberImageFile', authCheck, uploadCyberImage, uploadCyberImageFile)
 
-router.get('/getListEvaluateByProv/:province',authCheck, getListEvaluateByProv)
+router.get('/getListEvaluateByHosp/:hcode', authCheck, getListEvaluateByHosp)
 
-router.get('/getListEvaluateByZone/:zone',authCheck, getListEvaluateByZone)
+router.get('/getListEvaluateByProv/:province', authCheck, getListEvaluateByProv)
 
-router.get('/refreshEvaluate',authCheck, refreshEvaluate)
+router.get('/getListEvaluateByZone/:zone', authCheck, getListEvaluateByZone)
 
-router.get('/sumEvaluateByHosp',authCheck, sumEvaluateByHosp)
+router.get('/getCyberImageData', authCheck, getCyberImageData)
 
-router.get('/getEvaluateByHosp',authCheck, getEvaluateByHosp)
+router.get('/refreshEvaluate', authCheck, refreshEvaluate)
 
-router.get('/getEvaluateById/:id',authCheck, getEvaluateById)
+router.get('/sumEvaluateByHosp', authCheck, sumEvaluateByHosp)
 
-router.put('/updateChoiceEvaluate',authCheck, updateChoiceEvaluate)
+router.get('/getEvaluateByHosp', authCheck, getEvaluateByHosp)
 
-router.post('/saveDocuments',authCheck, uploadFile, saveDocuments)
+router.get('/getEvaluateById/:id', authCheck, getEvaluateById)
 
-router.post('/saveEvidenceAll',authCheck, uploadAllTypeFile, saveEvidenceAll)
+router.put('/updateChoiceEvaluate', authCheck, updateChoiceEvaluate)
 
-router.put('/uploadFileById/:id',authCheck, uploadAllTypeFile, uploadFileById)
+router.post('/saveDocuments', authCheck, uploadFile, saveDocuments)
 
-router.put('/ssjChangeStatusApprove',authCheck, ssjChangeStatusApprove)
+router.post('/saveEvidenceAll', authCheck, uploadAllTypeFile, saveEvidenceAll)
 
-router.put('/zoneChangeStatusApprove',authCheck, zoneChangeStatusApprove)
+router.put('/uploadFileById/:id', authCheck, uploadAllTypeFile, uploadFileById)
+
+router.put('/ssjChangeStatusApprove', authCheck, ssjChangeStatusApprove)
+
+router.put('/zoneChangeStatusApprove', authCheck, zoneChangeStatusApprove)
 
 router.get('/getEvidenceFromEvaluate', authCheck, getEvidenceFromEvaluate)
 

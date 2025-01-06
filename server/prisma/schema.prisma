@@ -32,6 +32,7 @@ model Users {
   log_evaluate     Log_evaluate[]
   log_ssj_approve  Log_ssj_approve[]
   log_zone_approve Log_zone_approve[]
+  cyber_levels     Cyber_level[]
 }
 
 model Category_quest {
@@ -187,16 +188,29 @@ model Log_evaluate {
 }
 
 model Hospitals {
-  id        Int        @id @default(autoincrement())
-  hcode     String     @unique
-  hname_th  String
-  tmbcode   String
-  tmbname   String
-  ampcode   String
-  ampname   String
-  provcode  String
-  provname  String
-  zone      String
-  typename  String
-  evaluates Evaluate[]
+  id           Int           @id @default(autoincrement())
+  hcode        String        @unique
+  hname_th     String
+  tmbcode      String
+  tmbname      String
+  ampcode      String
+  ampname      String
+  provcode     String
+  provname     String
+  zone         String
+  typename     String
+  evaluates    Evaluate[]
+  cyber_levels Cyber_level[]
+}
+
+model Cyber_level {
+  id          Int        @id @default(autoincrement())
+  cyber_level String
+  cyber_image String
+  Users       Users?     @relation(fields: [usersId], references: [id])
+  usersId     Int
+  Hospitals   Hospitals? @relation(fields: [hcode], references: [hcode])
+  hcode       String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }

@@ -331,11 +331,9 @@ const FormReportHosp = () => {
                                                                         ?
                                                                         <>
                                                                             <div className='flex justify-center items-center'>
-                                                                                <Image
-                                                                                    className='px-1 py-1'
-                                                                                    width={100}
-                                                                                    src={`https://bdh-service.moph.go.th/api/smarthosp/file-uploads/${item2.file_name}`}
-                                                                                />
+                                                                                <Button onClick={()=> showEvidence(item2)}>
+                                                                                    <EyeTwoTone /> ดูไฟล์หลักฐาน
+                                                                                </Button>
                                                                                 {/* <Button onClick={() => showEvidence(item2)}>
                                                                                     <EyeTwoTone /> ดูหลักฐาน
                                                                                 </Button> */}
@@ -345,7 +343,7 @@ const FormReportHosp = () => {
                                                                         <>
                                                                             <div className=''>
                                                                                 <Button onClick={() => showUploadModal(item2)}>
-                                                                                    <UploadOutlined /> เพิ่มภาพ
+                                                                                    <UploadOutlined /> เพิ่มไฟล์ pdf
                                                                                 </Button>
                                                                             </div>
                                                                         </>
@@ -412,7 +410,7 @@ const FormReportHosp = () => {
                             >
                                 <Upload customRequest={({ onSuccess }) => onSuccess('ok')}>
                                     <Button>
-                                        <UploadOutlined /> อัปโหลดไฟล์นามสกุล (.jpg หรือ .png หรือ .pdf)
+                                        <UploadOutlined /> อัปโหลดไฟล์นามสกุล (.pdf) เท่านั้น!
                                     </Button>
                                 </Upload>
                             </Form.Item>

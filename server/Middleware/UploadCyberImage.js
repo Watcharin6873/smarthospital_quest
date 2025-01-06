@@ -4,24 +4,24 @@ const path = require('path')
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './file-uploads')
+        cb(null, './cyber-image')
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now()
-        cb(null, 'SmartHosp_' + uniqueSuffix + '_' + file.originalname)
+        cb(null, 'CyberImage_' + uniqueSuffix + '_' + file.originalname)
     }
 })
 
-exports.uploadAllTypeFile = multer({
+exports.uploadCyberImage = multer({
     storage: storage,
-    fileFilter: (req, file, cb) =>{
+    fileFilter: (req, file, cb) => {
         checkFileType(file, cb);
     }
-}).single('file_name')
+}).single('cyber_image')
 
 // Check file type
 function checkFileType(file, cb) {
-    const filetypes = /pdf/;
+    const filetypes = /jpg|jpeg|png|PNG|pdf/;
     const extname = filetypes.test(path.extname(file.originalname));
     const mimetype = filetypes.test(file.mimetype);
 

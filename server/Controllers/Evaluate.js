@@ -606,7 +606,51 @@ exports.uploadFileById = async (req, res) => {
 
     } catch (err) {
         console.log(err)
-        res.status(500).send({ message: "ต้องเป็นไฟล์นามสกุล .png หรือ .jpg หรือ .pdf เท่านั้น!!" })
+        res.status(500).send({ message: "ต้องเป็นไฟล์นามสกุล pdf เท่านั้น!!" })
+    }
+}
+
+
+exports.uploadCyberImageFile = async (req, res) =>{
+    try {
+        //Code
+        const data = req.body
+        data.cyber_image = req.file.filename
+
+        console.log(data)
+
+        await prisma.cyber_level.create({
+            data:{
+                cyber_level: data.cyber_level,
+                cyber_image: data.cyber_image,
+                usersId: Number(data.usersId),
+                hcode: data.hcode
+            }
+        })
+
+
+        res.json({message: `เพิ่มข้อมูลระดับ Cyber security เรียบร้อย!`})
+        
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message: "Server error!"})
+    }
+}
+
+
+exports.getCyberImageData = async (req, res) =>{
+    try {
+        //Code
+        const {hcode} = req.query
+        const result = await prisma.cyber_level.findFirst({
+            where:{hcode: hcode}
+        })
+
+        res.json(result)
+        
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message:'Server error!'})
     }
 }
 

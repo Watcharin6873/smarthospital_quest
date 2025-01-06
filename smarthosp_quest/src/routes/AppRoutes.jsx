@@ -39,6 +39,7 @@ import Zone_ApproveService from '../pages/user/approver/zone/Zone_ApproveService
 import ReportZone from '../pages/report/ReportZone'
 import HomeSSJ from '../pages/user/approver/prov/HomeSSJ'
 import HomeZone from '../pages/user/approver/zone/HomeZone'
+import Cybersecuritycheck from '../pages/user/responder/Cybersecuritycheck'
 
 
 
@@ -72,6 +73,7 @@ const router = createBrowserRouter([
       { path: 'evaluate-management', element: <EvaluateManagement /> },
       { path: 'evaluate-service', element: <EvaluateService /> },
       { path: 'evaluate-people', element: <EvaluatePeople /> },
+      { path: 'cyber-check', element: <Cybersecuritycheck />},
       { path: 'report-hosp', element: <ReportHosp /> },
       { path: 'contact-us', element: <ContactUs /> },
     ]
