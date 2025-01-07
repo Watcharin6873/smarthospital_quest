@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import useGlobalStore from '../../../../store/global-store'
+import Gem from '../../../../assets/gem-icons.png'
+import Gold from '../../../../assets/Gold2.png'
+import Silver from '../../../../assets/Silver2.png'
+import HospitalIcon from '../../../../assets/Hospital.png'
 import { useNavigate } from 'react-router-dom'
 import { Hospital, UserPlus, Users } from 'lucide-react'
 import { getHospitalOnProv } from '../../../../api/Hospital'
 import { getListEvaluateByProv } from '../../../../api/Evaluate'
 import { approveUserOnProv, notApproveUserOnProv } from '../../../../api/User'
+import { ArrowUpOutlined } from '@ant-design/icons'
 
 const FormHomeSSJ = () => {
 
@@ -30,7 +35,7 @@ const FormHomeSSJ = () => {
   const loadListHospital = async () => {
     await getHospitalOnProv(token, province)
       .then(res => {
-        console.log('Hosp: ',res.data)
+        console.log('Hosp: ', res.data)
         setListHospital(res.data)
       })
       .catch(err => {
@@ -73,6 +78,79 @@ const FormHomeSSJ = () => {
     <div>
 
       <div className='grid grid-cols-4 gap-4'>
+
+        <div className='bg-white rounded-md shadow-md p-3'>
+          <div className='flex items-center gap-2'>
+            <img
+              className='bg-amber-50 w-12 rounded-full shadow-md'
+              src={Gem}
+              alt='Gem'
+            />
+            <p className='text-2xl text-green-700 font-bold'>ระดับเพชร</p>
+          </div>
+          <div className='flex justify-center items-baseline gap-2 my-3'>
+            <p className='text-4xl'>0</p>
+            <p>รพ.</p>
+          </div>
+          <div className='p-2 flex justify-between'>
+            <div className='text-slate-400'><p>จำนวนทั้งหมด</p></div>
+            <div className='flex text-green-700'><p>0.0 % </p><ArrowUpOutlined /></div>
+          </div>
+        </div>
+        <div className='bg-white rounded-md shadow-md p-3'>
+          <div className='flex items-center gap-2'>
+            <img
+              className='bg-amber-50 w-12 rounded-full shadow-md'
+              src={Gold}
+              alt='Gold'
+            />
+            <p className='text-2xl text-green-700 font-bold'>ระดับทอง</p>
+          </div>
+          <div className='flex justify-center items-baseline gap-2 my-3'>
+            <p className='text-4xl'>0</p>
+            <p>รพ.</p>
+          </div>
+          <div className='p-2 flex justify-between'>
+            <div className='text-slate-400'><p>จำนวนทั้งหมด</p></div>
+            <div className='flex text-green-700'><p>0.0 % </p><ArrowUpOutlined /></div>
+          </div>
+        </div>
+        <div className='bg-white rounded-md shadow-md p-3'>
+          <div className='flex items-center gap-2'>
+            <img
+              className='bg-amber-50 w-12 rounded-full shadow-md'
+              src={Silver}
+              alt='Silver'
+            />
+            <p className='text-2xl text-green-700 font-bold'>ระดับเงิน</p>
+          </div>
+          <div className='flex justify-center items-baseline gap-2 my-3'>
+            <p className='text-4xl'>0</p>
+            <p>รพ.</p>
+          </div>
+          <div className='p-2 flex justify-between'>
+            <div className='text-slate-400'><p>จำนวนทั้งหมด</p></div>
+            <div className='flex text-green-700'><p>0.0 % </p><ArrowUpOutlined /></div>
+          </div>
+        </div>
+        <div className='bg-white rounded-md shadow-md p-3'>
+          <div className='flex items-center gap-2'>
+            <img
+              className='bg-amber-50 w-12 rounded-full shadow-md'
+              src={HospitalIcon}
+              alt='HospitalIcon'
+            />
+            <p className='text-2xl text-green-700 font-bold'>รพ.ทั้งหมด</p>
+          </div>
+          <div className='flex justify-center items-baseline gap-2 my-3'>
+            <p className='text-4xl'>0/{listHospital.length}</p>
+            <p>รพ.</p>
+          </div>
+          <div className='p-2 flex justify-between'>
+            <div className='text-slate-400'><p>จำนวนทั้งหมด</p></div>
+            <div className='flex text-green-700'><p>0.0 % </p><ArrowUpOutlined /></div>
+          </div>
+        </div>
 
         <div className='bg-white rounded-md shadow-md p-3'>
           <div className='flex justify-center gap-2'>

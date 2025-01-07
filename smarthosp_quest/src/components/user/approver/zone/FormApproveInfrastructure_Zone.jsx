@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import useGlobalStore from '../../../../store/global-store'
 import { getDocumentByEvaluateByHosp, getListEvaluateByZone, zoneChangeStatusApprove } from '../../../../api/Evaluate'
-import { Button, Checkbox, Divider, Empty, Form, Image, Select, Switch } from 'antd'
+import { Button, Checkbox, Divider, Empty, Form, Image, Input, Select, Switch } from 'antd'
 import { getListQuests } from '../../../../api/Quest'
 import { toast } from 'react-toastify'
-import { SnippetsOutlined } from '@ant-design/icons'
+import { EyeTwoTone, SnippetsOutlined } from '@ant-design/icons'
+import { Save } from 'lucide-react'
 
 const FormApproveInfrastructure_Zone = () => {
 
@@ -19,6 +20,9 @@ const FormApproveInfrastructure_Zone = () => {
   const [values, setValues] = useState({ provcode: "" })
   const [documentFile, setDocumentFile] = useState(null)
   const [clientReady, setClientReady] = useState(false);
+
+
+  const [formZoneApprove] = Form.useForm()
 
 
   useEffect(() => {
@@ -115,6 +119,29 @@ const FormApproveInfrastructure_Zone = () => {
       .catch(err => {
         console.log(err)
       })
+  }
+
+  useEffect(() => {
+    formZoneApprove.setFieldsValue({
+      evaluateId: searchQuery.id,
+      usersId: user.id,
+      province: user.province,
+      zone: user.zone
+    })
+  })
+
+  const handleApprove = async (fieldValue) => {
+    const result = []
+    searchQuery.forEach((qItem) => {
+      result.push({
+        evaluateId: fieldValue["evaluateId" + qItem.id],
+        usersId: fieldValue["usersId" + qItem.id],
+        province: fieldValue["province" + qItem.id],
+        zone: fieldValue["zone" + qItem.id],
+      })
+    })
+    console.log('Result: ', result)
+
   }
 
   const onFinishFailed = (errorInfo) => {
@@ -239,109 +266,156 @@ const FormApproveInfrastructure_Zone = () => {
         <Divider />
 
         <div>
-          <table className='w-full text-left table-fixed text-slate-800'>
-            <thead>
-              <tr className='text-md text-slate-500 border border-l border-r border-slate-300 bg-slate-50'>
-                <th className='text-center p-4 border-r'>เกณฑ์การประเมินและคำตอบ</th>
-                <th className='text-center p-4 border-r w-32'>คะแนนเต็ม</th>
-                <th className='text-center p-4 border-r w-32'>คะแนนจำเป็น</th>
-                <th className='text-center p-4 border-r w-32'>ภาพหลักฐาน</th>
-                <th className='text-center p-4 border-r w-32'>การอนุมัติ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                searchQuets.map((item1, k1) =>
-                  <>
-                    <tr key={k1} className='border-b border-l border-r'>
-                      <td colSpan={5}>
-                        <p
-                          className='ml-1 p-1 font-bold'
+          <Form
+            name='formZoneApprove'
+            form={formZoneApprove}
+            onFinish={handleApprove}
+            onFinishFailed={onFinishFailed}
+          >
+            <table className='w-full text-left table-fixed text-slate-800'>
+              <thead>
+                <tr className='text-md text-slate-500 border border-l border-r border-slate-300 bg-slate-50'>
+                  <th className='text-center p-4 border-r'>เกณฑ์การประเมินและคำตอบ</th>
+                  <th className='text-center p-4 border-r w-32'>คะแนนเต็ม</th>
+                  <th className='text-center p-4 border-r w-32'>คะแนนจำเป็น</th>
+                  <th className='text-center p-4 border-r w-32'>ไฟล์หลักฐาน</th>
+                  {/* <th className='text-center p-4 border-r w-32'>การอนุมัติ</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  searchQuets.map((item1, k1) =>
+                    <>
+                      <tr key={k1} className='border-b border-l border-r'>
+                        <td colSpan={4}>
+                          <p
+                            className='ml-1 p-1 font-bold'
                           // style={{ fontSize: '18px' }}
-                        >
-                          <u>{item1.quest_name}</u>
-                        </p>
-                      </td>
-                    </tr>
-                    {
-                      searchQuery.map((item2, k2) =>
-                        item2.questId === item1.id
-                          ?
-                          <>
-                            <tr key={k2} className='border-neutral-200 dark:border-white/10 border-b border-l border-r'>
-                              <td className='p-4'>
-                                <div className='ml-7'>
-                                  <p className='text-slate-600'>{item2.sub_quest_name}</p>
-                                  <div className='pl-10 flex gap-2'>
-                                    <Checkbox checked />
-                                    {
-                                      item2.sub_quest_list.map((it) =>
-                                        it.choice === item2.check
-                                          ?
-                                          <p className={
-                                            it.sub_quest_listname === 'ไม่มีการดำเนินการ'
-                                              ? 'text-red-700'
-                                              : 'text-green-700'
-                                          }>
-                                            {it.sub_quest_listname}
-                                          </p>
-                                          : <></>
-                                      )
-                                    }
-                                  </div>
-                                </div>
-                              </td>
-                              <td className='text-center border-l'>
-                                {
-                                  item2.sub_quest_list.map((it1) =>
-                                    it1.choice === item2.check
-                                      ? <p className=''>{it1.sub_quest_total_point}</p>
-                                      : <></>
-                                  )
-                                }
-                              </td>
-                              <td className='text-center border-l'>
-                                {
-                                  item2.sub_quest_list.map((it2) =>
-                                    it2.choice === item2.check
-                                      ? <p className=''>{it2.sub_quest_require_point}</p>
-                                      : <></>
-                                  )
-                                }
-                              </td>
-                              <td className='text-center border-l'>
-                                <div className='flex justify-center items-center'>
-                                  {
-                                    item2.file_name
-                                      ?
-                                      <>
-                                        <Image
-                                          className='px-1 py-1'
-                                          width={100}
-                                          src={`https://bdh-service.moph.go.th/api/smarthosp/file-uploads/${item2.file_name}`}
-                                        />
-                                      </>
-                                      :
-                                      <>
-                                        -
-                                      </>
-                                  }
+                          >
+                            <u>{item1.quest_name}</u>
+                          </p>
+                        </td>
+                      </tr>
+                      {
+                        searchQuery.map((item2, k2) =>
+                          item2.questId === item1.id
+                            ?
+                            <>
+                              <tr key={k2} className='border-neutral-200 dark:border-white/10 border-b border-l border-r'>
+                                <td className='p-4'>
+                                  <Form.Item
+                                    name={'evaluateId' + item1.id}
+                                    hidden={true}
+                                    initialValue={item1.id}
+                                  >
+                                    <Input />
+                                  </Form.Item>
 
-                                </div>
-                              </td>
-                              <td className='text-center border-l px-1'>
+                                  <Form.Item
+                                    name={'usersId' + item1.id}
+                                    hidden={true}
+                                    initialValue={user.id}
+                                  >
+                                    <Input />
+                                  </Form.Item>
+                                  <Form.Item
+                                    name={'province' + item1.id}
+                                    hidden={true}
+                                    initialValue={user.province}
+                                  >
+                                    <Input />
+                                  </Form.Item>
+                                  <Form.Item
+                                    name={'zone' + item1.id}
+                                    hidden={true}
+                                    initialValue={user.zone}
+                                  >
+                                    <Input />
+                                  </Form.Item>
+                                  <div className='ml-7'>
+                                    <p className='text-slate-600'>{item2.sub_quest_name}</p>
+                                    <div className='pl-10 flex gap-2'>
+                                      <Checkbox checked />
+                                      {
+                                        item2.sub_quest_list.map((it) =>
+                                          it.choice === item2.check
+                                            ?
+                                            <p className={
+                                              it.sub_quest_listname === 'ไม่มีการดำเนินการ'
+                                                ? 'text-red-700'
+                                                : 'text-green-700'
+                                            }>
+                                              {it.sub_quest_listname}
+                                            </p>
+                                            : <></>
+                                        )
+                                      }
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className='text-center border-l'>
+                                  {
+                                    item2.sub_quest_list.map((it1) =>
+                                      it1.choice === item2.check
+                                        ? <p className=''>{it1.sub_quest_total_point}</p>
+                                        : <></>
+                                    )
+                                  }
+                                </td>
+                                <td className='text-center border-l'>
+                                  {
+                                    item2.sub_quest_list.map((it2) =>
+                                      it2.choice === item2.check
+                                        ? <p className=''>{it2.sub_quest_require_point}</p>
+                                        : <></>
+                                    )
+                                  }
+                                </td>
+                                <td className='text-center border-l'>
+                                  <div className='flex justify-center items-center'>
+                                    {
+                                      item2.file_name
+                                        ?
+                                        <>
+                                          <Button onClick={() => showPDF(item1.file_name)}>
+                                            <EyeTwoTone /> ดูไฟล์
+                                          </Button>
+                                        </>
+                                        :
+                                        <>
+                                          -
+                                        </>
+                                    }
+
+                                  </div>
+                                </td>
+                                {/* <td className='text-center border-l px-1'>
                                 <Switch size='small' checked={item2.zone_approve} onChange={(e) => changeStatusApprove(e, item2)} />
-                              </td>
-                            </tr>
-                          </>
-                          : null
-                      )
-                    }
-                  </>
-                )
-              }
-            </tbody>
-          </table>
+                              </td> */}
+                              </tr>
+                            </>
+                            : null
+                        )
+                      }
+                    </>
+                  )
+                }
+              </tbody>
+            </table>
+            <div className='flex justify-center space-x-1 mt-3'>
+              <div className='m-3'>
+                <Form.Item>
+                  <Button
+                    type='primary'
+                    htmlType='submit'
+                    style={{ width: 500 }}
+                  >
+                    <Save /> Approve ผลการประเมินด้านโครงสร้าง
+                  </Button>
+                </Form.Item>
+              </div>
+            </div>
+          </Form>
         </div>
 
 

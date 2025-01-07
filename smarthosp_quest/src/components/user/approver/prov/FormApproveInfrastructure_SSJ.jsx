@@ -304,8 +304,10 @@ const FormApproveInfrastructure_SSJ = () => {
                             : null
                         ))
                       }
+                      <div>
+                        
+                      </div>
                     </>
-
                   )
                 }
               </tbody>
