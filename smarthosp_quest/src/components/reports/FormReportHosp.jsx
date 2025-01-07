@@ -202,7 +202,7 @@ const FormReportHosp = () => {
 
     const showDocument = (values) => {
         console.log(values)
-        getDocumentByEvaluateByHosp(token, hcode, values)
+        getDocumentByEvaluateByHosp(token, values, hcode)
             .then(res => {
                 console.log('Document: ', res.data)
                 if (res.data) {

@@ -10,6 +10,7 @@ import ContactUs from '../pages/ContactUs'
 import ProtectRouteUser from '../routes/ProtectRouteUser'
 import ProtectRouteAdmin from '../routes/ProtectRoteAdmin'
 import LayoutUser from '../layouts/LayoutUser'
+import HomeAdmin from '../pages/admin/HomeAdmin'
 import HomeUser from '../pages/user/HomeUser'
 import LayoutAdmin from '../layouts/LayoutAdmin'
 import ManageUser from '../pages/admin/ManageUser'
@@ -110,7 +111,7 @@ const router = createBrowserRouter([
     path: '/smarthosp-quest/admin',
     element: <ProtectRouteAdmin element={<LayoutAdmin />} />,
     children: [
-      { index: true, element: <HomeUser /> },
+      { index: true, element: <HomeAdmin /> },
       { path: 'manage-user', element: <ManageUser /> },
       { path: 'manage-topic', element: <ManageTopic /> },
       { path: 'manage-quest', element: <ManageQuest /> },

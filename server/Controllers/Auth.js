@@ -6,14 +6,14 @@ exports.registerByProviderID = async (req, res) => {
     try {
         const {
             email,
-            title_th,
+            // title_th,
             firstname_th,
             lastname_th,
             hcode,
             hname_th,
             position_id,
             position,
-            sub_district,
+            // sub_district,
             district,
             province,
             zone,
@@ -38,14 +38,14 @@ exports.registerByProviderID = async (req, res) => {
         await prisma.users.create({
             data: {
                 email: email,
-                title_th: title_th,
+                // title_th: title_th,
                 firstname_th: firstname_th,
                 lastname_th: lastname_th,
                 hcode: hcode,
                 hname_th: hname_th,
                 position_id: position_id,
                 position: position,
-                sub_district: sub_district,
+                // sub_district: sub_district,
                 district: district,
                 province: province,
                 zone: zone,
@@ -95,7 +95,7 @@ exports.loginByProviderID = async (req, res) => {
                 user: {
                     id: user.id,
                     email: user.email,
-                    title_th: user.title_th,
+                    // title_th: user.title_th,
                     firstname_th: user.firstname_th,
                     lastname_th: user.lastname_th,
                     hcode: user.hcode,
@@ -104,7 +104,7 @@ exports.loginByProviderID = async (req, res) => {
                     position: user.position,
                     role: user.role,
                     objective: user.objective,
-                    sub_district: user.sub_district,
+                    // sub_district: user.sub_district,
                     district: user.district,
                     province: user.province,
                     zone: user.zone
@@ -143,7 +143,7 @@ exports.currentUser = async (req, res) => {
             },
             select: {
                 email: true,
-                title_th: true,
+                // title_th: true,
                 firstname_th: true,
                 lastname_th: true,
                 hcode: true,

@@ -10,14 +10,12 @@ datasource db {
 model Users {
   id               Int                @id @default(autoincrement())
   email            String
-  title_th         String
   firstname_th     String
   lastname_th      String
   hcode            String
   hname_th         String
   position_id      String
   position         String
-  sub_district     String
   district         String
   province         String
   zone             String
@@ -27,12 +25,12 @@ model Users {
   enabled          Boolean            @default(false)
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
+  cyber_levels     Cyber_level[]
   documents        Documents[]
   evaluates        Evaluate[]
   log_evaluate     Log_evaluate[]
   log_ssj_approve  Log_ssj_approve[]
   log_zone_approve Log_zone_approve[]
-  cyber_levels     Cyber_level[]
 }
 
 model Category_quest {
@@ -199,18 +197,21 @@ model Hospitals {
   provname     String
   zone         String
   typename     String
-  evaluates    Evaluate[]
   cyber_levels Cyber_level[]
+  evaluates    Evaluate[]
 }
 
 model Cyber_level {
-  id          Int        @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   cyber_level String
   cyber_image String
-  Users       Users?     @relation(fields: [usersId], references: [id])
   usersId     Int
-  Hospitals   Hospitals? @relation(fields: [hcode], references: [hcode])
   hcode       String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  Hospitals   Hospitals @relation(fields: [hcode], references: [hcode])
+  Users       Users     @relation(fields: [usersId], references: [id])
+
+  @@index([hcode], map: "Cyber_level_hcode_fkey")
+  @@index([usersId], map: "Cyber_level_usersId_fkey")
 }

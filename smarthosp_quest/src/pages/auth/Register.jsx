@@ -30,6 +30,7 @@ const Register = () => {
   const [formCreateUser] = Form.useForm()
 
   const code = new URLSearchParams(myParam).get("code")
+  // console.log('Code:', code)
 
   if (code) {
     const values = {
@@ -51,16 +52,17 @@ const Register = () => {
         }
         getTokenProviderID(values2)
           .then(res => {
-
+            // console.log("HealthData: ", res.data)
             const access_token = res.data.data.access_token;
             const client_id = '49fba4c4-2c60-4d3f-b8da-3925d1ad7e65';
             const secret_key = 'F83E767464E7334923C43D1C1443B';
 
             getProviderProfile(access_token, client_id, secret_key)
               .then(res => {
+                // console.log("ProviderProfile: ", res.data.data)
                 setProviderProfile(res.data.data)
                 const lenghtHosp = res.data.data.organization
-                if (lenghtHosp.length > 1) {
+                if (lenghtHosp.length > 0) {
                   setModalListHosp(true)
                 } else {
                   setValue(lenghtHosp)
@@ -106,11 +108,11 @@ const Register = () => {
     position_id: value.position_id,
     position: value.position,
     address: value.address,
-    level: "5",
+    level: "4",
     objective: "hosp_approve"
   }
 
-  console.log('HospValue: ', providerData)
+  // console.log('HospValue: ', providerData)
 
   useEffect(() => {
     formCreateUser.setFieldsValue({
@@ -122,7 +124,6 @@ const Register = () => {
       lastname_th: providerData.lastname_th,
       position_id: providerData.position_id,
       position: providerData.position,
-      sub_district: providerData.address.sub_district,
       district: providerData.address.district,
       province: providerData.address.province,
       // zone: '',
@@ -264,7 +265,7 @@ const Register = () => {
                   <div className='flex justify-center'>
                     <p className='text-lg font-bold m-2'><u>ข้อมูลบุคคล</u></p>
                   </div>
-                  <Form.Item
+                  {/* <Form.Item
                     name='title_th'
                     label={<b>คำนำหน้าชื่อ :</b>}
                     rules={[
@@ -275,7 +276,7 @@ const Register = () => {
                     style={{ marginBottom: '10px' }}
                   >
                     <Input readOnly />
-                  </Form.Item>
+                  </Form.Item> */}
                   <Form.Item
                     name='firstname_th'
                     label={<b>ชื่อ :</b>}
@@ -367,7 +368,7 @@ const Register = () => {
                   >
                     <Input readOnly />
                   </Form.Item>
-                  <Form.Item
+                  {/* <Form.Item
                     name='sub_district'
                     label={<b>ตำบล :</b>}
                     rules={[
@@ -378,7 +379,7 @@ const Register = () => {
                     style={{ marginBottom: '10px' }}
                   >
                     <Input readOnly />
-                  </Form.Item>
+                  </Form.Item> */}
                   <Form.Item
                     name='district'
                     label={<b>อำเภอ :</b>}

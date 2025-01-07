@@ -110,7 +110,7 @@ const SidebarUserResponder = () => {
                     <ListChecks className='mr-2' />
                     ประเมินด้านบุคลากร
                 </NavLink>
-                <NavLink
+                {/* <NavLink
                     to={'cyber-check'}
                     className={({ isActive }) =>
                         isActive
@@ -120,7 +120,7 @@ const SidebarUserResponder = () => {
                 >
                     <ShieldCheck className='mr-2' />
                     ระดับ Cyber Security ศทส.
-                </NavLink>
+                </NavLink> */}
                 <NavLink
                     to={'report-hosp'}
                     className={({ isActive }) =>
