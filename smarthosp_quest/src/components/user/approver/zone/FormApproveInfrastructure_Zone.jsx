@@ -131,16 +131,17 @@ const FormApproveInfrastructure_Zone = () => {
   })
 
   const handleApprove = async (fieldValue) => {
-    const result = []
-    searchQuery.forEach((qItem) => {
-      result.push({
-        evaluateId: fieldValue["evaluateId" + qItem.id],
-        usersId: fieldValue["usersId" + qItem.id],
-        province: fieldValue["province" + qItem.id],
-        zone: fieldValue["zone" + qItem.id],
-      })
-    })
-    console.log('Result: ', result)
+    console.log(fieldValue)
+    // const result = []
+    // searchQuery.forEach((qItem) => {
+    //   result.push({
+    //     evaluateId: fieldValue["evaluateId" + qItem.id],
+    //     usersId: fieldValue["usersId" + qItem.id],
+    //     province: fieldValue["province" + qItem.id],
+    //     zone: fieldValue["zone" + qItem.id],
+    //   })
+    // })
+    // console.log('Result: ', result)
 
   }
 
@@ -148,7 +149,7 @@ const FormApproveInfrastructure_Zone = () => {
     console.log('Fialed: ', errorInfo)
   }
 
-  // console.log('Data: ', searchQuery)
+  console.log('Data: ', searchQuery)
 
   const searchQuets = listQuests.filter(f => f.category_questId === 1)
 
@@ -304,29 +305,29 @@ const FormApproveInfrastructure_Zone = () => {
                               <tr key={k2} className='border-neutral-200 dark:border-white/10 border-b border-l border-r'>
                                 <td className='p-4'>
                                   <Form.Item
-                                    name={'evaluateId' + item1.id}
+                                    name={'evaluateId' + item2.id}
                                     hidden={true}
-                                    initialValue={item1.id}
+                                    initialValue={item2.id}
                                   >
                                     <Input />
                                   </Form.Item>
 
                                   <Form.Item
-                                    name={'usersId' + item1.id}
+                                    name={'usersId' + item2.id}
                                     hidden={true}
                                     initialValue={user.id}
                                   >
                                     <Input />
                                   </Form.Item>
                                   <Form.Item
-                                    name={'province' + item1.id}
+                                    name={'province' + item2.id}
                                     hidden={true}
                                     initialValue={user.province}
                                   >
                                     <Input />
                                   </Form.Item>
                                   <Form.Item
-                                    name={'zone' + item1.id}
+                                    name={'zone' + item2.id}
                                     hidden={true}
                                     initialValue={user.zone}
                                   >
