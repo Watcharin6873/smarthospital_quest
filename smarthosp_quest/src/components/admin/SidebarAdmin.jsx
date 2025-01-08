@@ -65,7 +65,7 @@ const SidebarAdmin = () => {
           }
         >
           <UserPen className='mr-2' />
-          จัดการข้อมูลผู้ใช้งาน
+          จัดการข้อมูลผู้ใช้งาน (เขตฯ)
         </NavLink>
         <NavLink
           to={'manage-topic'}

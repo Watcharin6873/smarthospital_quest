@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Ellipsis, LoaderCircle, Search, Trash2, UserPen } from 'lucide-react'
-import { Input, Modal, Select, Space, Switch, Table, Tag } from 'antd';
+import { Button, Form, Input, Modal, Select, Space, Switch, Table, Tag } from 'antd';
 import useGlobalStore from '../../store/global-store';
-import { changeObjective, changeRole, changeStatus, getListUsers, removeUser } from '../../api/User';
+import { changeObjective, changeRole, changeStatus, getListUsers, getListUsersZoneApprove, removeUser } from '../../api/User';
 import dayjs from 'dayjs';
 import 'dayjs/locale/th'
 import buddhistExtra from 'dayjs/plugin/buddhistEra'
@@ -21,15 +21,44 @@ const ManageUsers = () => {
     const [listUsers, setListUsers] = useState([])
     const [searchQuery, setSearchQuery] = useState([])
     const [isLoading, setIsLoading] = useState(false)
+    const [formSearch] = Form.useForm()
+    const [clientReady, setClientReady] = useState(false)
 
     useEffect(() => {
         loadListUsers(token)
     }, [])
 
+    const dataOfZone = [
+        { id: 1, zone: '01', zone_name: 'เขตสุขภาพที่ 1' },
+        { id: 2, zone: '02', zone_name: 'เขตสุขภาพที่ 2' },
+        { id: 3, zone: '03', zone_name: 'เขตสุขภาพที่ 3' },
+        { id: 4, zone: '04', zone_name: 'เขตสุขภาพที่ 4' },
+        { id: 5, zone: '05', zone_name: 'เขตสุขภาพที่ 5' },
+        { id: 6, zone: '06', zone_name: 'เขตสุขภาพที่ 6' },
+        { id: 7, zone: '07', zone_name: 'เขตสุขภาพที่ 7' },
+        { id: 8, zone: '08', zone_name: 'เขตสุขภาพที่ 8' },
+        { id: 9, zone: '09', zone_name: 'เขตสุขภาพที่ 9' },
+        { id: 10, zone: '10', zone_name: 'เขตสุขภาพที่ 10' },
+        { id: 11, zone: '11', zone_name: 'เขตสุขภาพที่ 11' },
+        { id: 12, zone: '12', zone_name: 'เขตสุขภาพที่ 12' }
+    ]
+
+    const data1 = dataOfZone.sort((a, b) => (a.zone > b.zone) ? 1 : -1).map((item) => ({ ...item }))
+
+    const optionOfZone = data1.map((item) => ({
+        value: item.zone,
+        label: item.zone_name
+    }))
+
+    const onFinishFailed = async (errorInfo) => {
+        console.log('Failed: ', errorInfo)
+    }
+
     const loadListUsers = async (token) => {
         setIsLoading(true)
-        await getListUsers(token)
+        await getListUsersZoneApprove(token)
             .then(res => {
+                console.log(res.data)
                 setListUsers(res.data)
                 setSearchQuery(res.data)
                 setIsLoading(false)
@@ -41,12 +70,16 @@ const ManageUsers = () => {
             .finally(() => setIsLoading(false))
     }
 
+    const handleSearch = (searchValue) => {
+        console.log(searchValue)
+        setSearchQuery(listUsers.filter(f => f.zone === searchValue.zone))
+    }
+
     const handleFilter = (e) => {
         setSearchQuery(listUsers.filter(f =>
             f.hcode.toLowerCase().includes(e.target.value) ||
             f.hname_th.toLowerCase().includes(e.target.value) ||
-            f.firstname_th.toLowerCase().includes(e.target.value)||
-            f.zone.toLowerCase().includes(e.target.value)
+            f.firstname_th.toLowerCase().includes(e.target.value)
         ))
     }
 
@@ -311,10 +344,49 @@ const ManageUsers = () => {
                 {/* <div className='flex justify-center items-center'>
                     <LoaderCircle className='w-16 h-16 text-blue-400 animate-spin' />
                 </div> */}
+                <div className='flex justify-center items-center p-1'>
+                    <Form
+                        name='formSearch'
+                        form={formSearch}
+                        onFinish={handleSearch}
+                        onFinishFailed={onFinishFailed}
+                        layout='inline'
+                    >
+                        <Form.Item
+                            name='zone'
+                            label='เลือกเขตสุขภาพ'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'กรุณาเลือกเขตสุขภาพ'
+                                }
+                            ]}
+                        >
+                            <Select
+                                showSearch
+                                optionFilterProp="label"
+                                filterSort={(optionA, optionB) =>
+                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                }
+                                placeholder='กรุณาเลือกหน่วยบริการ...'
+                                options={optionOfZone}
+                                style={{ width: '250px' }}
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                            >
+                                ค้นหา
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </div>
                 <div className='flex justify-between items-center p-3'>
                     <div>
                         <p style={{ fontSize: '14px' }}>
-                            จำนวนบัญชีทั้งหมด {searchQuery.length} รายการ
+                            จำนวนบัญชี คกก.เขตสุขภาพ ทั้งหมด {searchQuery.length} รายการ
                         </p>
                     </div>
                     <div>
@@ -334,6 +406,25 @@ const ManageUsers = () => {
                     size='small'
                     pagination={{ pageSize: 12 }}
                 />
+                {/* <table className='w-full text-left table-fixed text-slate-800'>
+                    <thead>
+                        <tr className='text-md text-slate-500 border border-l border-r border-slate-300 bg-slate-50'>
+                            <th className='text-center p-2 border-r'>ลำดับ</th>
+                            <th className='text-center p-2 border-r w-32'>ชื่อ-นามสกุล</th>
+                            <th className='text-center p-2 border-r w-32'>หน่วยบริการ</th>
+                            <th className='text-center p-2 border-r w-32'>เขตสุขภาพ</th>
+                            <th className='text-center p-2 border-r w-32'>ตำแหน่ง</th>
+                            <th className='text-center p-2 border-r w-32'>ระดับ</th>
+                            <th className='text-center p-2 border-r w-32'>สิทธิ</th>
+                            <th className='text-center p-2 border-r w-32'>ประเภท</th>
+                            <th className='text-center p-2 border-r w-32'>การอนุมัติ</th>
+                            <th className='text-center p-2 border-r w-32'>วันที่เพิ่ม</th>
+                            <th className='text-center p-2 border-r w-32'>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table> */}
             </div>
 
         </div>

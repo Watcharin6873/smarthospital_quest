@@ -16,6 +16,24 @@ exports.getListUsers = async (req, res) => {
     }
 }
 
+
+exports.getListUsersZoneApprove = async (req, res) => {
+    try {
+        //Code
+        const zone_aprove = 'zone_aprove'
+        const user = await prisma.users.findMany({
+            where:{objective: "zone_approve"},
+            orderBy: { createdAt: 'desc' }
+        })
+        res.json(user)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Sever error!"
+        })
+    }
+}
+
 exports.getListUsersByProv = async (req, res) => {
     try {
         //Code

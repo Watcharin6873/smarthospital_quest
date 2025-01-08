@@ -10,6 +10,16 @@ export const getListUsers = async(token)=>{
     )
 }
 
+export const getListUsersZoneApprove = async(token)=>{
+    return await axios.get(import.meta.env.VITE_APP_API + `/getListUsersZoneApprove`,
+        {
+            headers:{
+                Authorization: `Bearer ` + token
+            }
+        }
+    )
+}
+
 export const getListUsersByProv = async(token, province)=>{
     return await axios.get(import.meta.env.VITE_APP_API + `/getListUsersByProv?province=${province}`,
         {

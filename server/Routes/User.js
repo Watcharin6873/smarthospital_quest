@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const { 
+const {
     getListUsers,
+    getListUsersZoneApprove,
     getListUsersByProv,
     getListUsersByZone,
     getListUserById,
@@ -14,34 +15,36 @@ const {
     notApproveUserOnProv,
     approveUserOnZone,
     notApproveUserOnZone
- } = require('../Controllers/User')
- const {authCheck, adminCheck} = require('../Middleware/Auth')
+} = require('../Controllers/User')
+const { authCheck, adminCheck } = require('../Middleware/Auth')
 
-router.get('/getListUsers',authCheck,adminCheck, getListUsers)
+router.get('/getListUsers', authCheck, adminCheck, getListUsers)
 
-router.get('/getListUsersByProv',authCheck, getListUsersByProv)
+router.get('/getListUsersZoneApprove', authCheck, adminCheck, getListUsersZoneApprove)
 
-router.get('/getListUsersByZone',authCheck, getListUsersByZone)
+router.get('/getListUsersByProv', authCheck, getListUsersByProv)
 
-router.get('/approveUserOnProv/:province',authCheck, approveUserOnProv)
+router.get('/getListUsersByZone', authCheck, getListUsersByZone)
 
-router.get('/notApproveUserOnProv/:province',authCheck, notApproveUserOnProv)
+router.get('/approveUserOnProv/:province', authCheck, approveUserOnProv)
 
-router.get('/approveUserOnZone/:zone',authCheck, approveUserOnZone)
+router.get('/notApproveUserOnProv/:province', authCheck, notApproveUserOnProv)
 
-router.get('/notApproveUserOnZone/:zone',authCheck, notApproveUserOnZone)
+router.get('/approveUserOnZone/:zone', authCheck, approveUserOnZone)
 
-router.get('/getListUserById/:id',authCheck, adminCheck, getListUserById)
+router.get('/notApproveUserOnZone/:zone', authCheck, notApproveUserOnZone)
 
-router.put('/changeStatus',authCheck, adminCheck, changeStatus)
+router.get('/getListUserById/:id', authCheck, adminCheck, getListUserById)
 
-router.put('/changeRole',authCheck, adminCheck, changeRole)
+router.put('/changeStatus', authCheck, adminCheck, changeStatus)
 
-router.put('/changeLevel',authCheck, adminCheck, changeLevel)
+router.put('/changeRole', authCheck, adminCheck, changeRole)
 
-router.put('/changeObjective',authCheck, adminCheck, changeObjective)
+router.put('/changeLevel', authCheck, adminCheck, changeLevel)
 
-router.delete('/removeUser/:id',authCheck, adminCheck, removeUser)
+router.put('/changeObjective', authCheck, adminCheck, changeObjective)
+
+router.delete('/removeUser/:id', authCheck, adminCheck, removeUser)
 
 
 module.exports = router
