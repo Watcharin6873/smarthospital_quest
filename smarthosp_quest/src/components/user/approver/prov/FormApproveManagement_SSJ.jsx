@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import useGlobalStore from '../../../../store/global-store'
 import { useNavigate } from 'react-router-dom'
-import { getDocumentByEvaluateByHosp, getListEvaluateByProv, ssjChangeStatusApprove } from '../../../../api/Evaluate'
+import { getDocumentByEvaluateByHosp, getListEvaluateByProv, getSubQuetList, ssjChangeStatusApprove } from '../../../../api/Evaluate'
 import { Button, Checkbox, Divider, Form, Image, Select, Input, Switch } from 'antd'
 import { SnippetsOutlined } from '@ant-design/icons'
 import { toast } from 'react-toastify'
@@ -21,6 +21,7 @@ const FormApproveManagement_SSJ = () => {
   const [documentFile, setDocumentFile] = useState()
   const [hospcode, setHospcode] = useState(null)
   const [formSsjApprove] = Form.useForm()
+  const [subQuestList, setSubQuestList] = useState([])
 
 
   const province = user.province
@@ -28,7 +29,32 @@ const FormApproveManagement_SSJ = () => {
 
   useEffect(() => {
     loadListEvaluateByProve(token)
+    loadSubQuestList(token)
   }, [])
+
+
+  const loadSubQuestList = async () => {
+    await getSubQuetList(token)
+      .then(res => {
+        setSubQuestList(res.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
+  const dataSubQuestLists = subQuestList.map((item) => ({
+    id: item.id,
+    sub_questId: item.sub_questId,
+    choice: item.choice,
+    sub_quest_listname: item.sub_quest_listname,
+    sub_quest_total_point: item.sub_quest_total_point,
+    sub_quest_require_point: item.sub_quest_require_point,
+    description: item.description,
+    necessary: item.necessary,
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+  }))
 
 
   const loadListQuests = async () => {
@@ -236,20 +262,26 @@ const FormApproveManagement_SSJ = () => {
                                   </Form.Item>
                                   <div className='ml-7'>
                                     <p className='font-bold text-slate-600'>{item1.sub_quests.sub_quest_name}</p>
-                                    <div className='pl-10 flex gap-2'>
-                                      <Checkbox checked />
+                                    <div className='pl-10 gap-2'>
                                       {
-                                        item1.sub_quests.sub_quest_lists.map((it) =>
-                                          it.choice === item1.check
-                                            ?
-                                            <p className={
-                                              it.sub_quest_listname === 'ไม่มีการดำเนินการ'
-                                                ? 'text-red-700'
-                                                : 'text-green-700'
-                                            }>
-                                              {it.sub_quest_listname}
-                                            </p>
-                                            : <></>
+                                        item1.check.split(",").map((ch) =>
+                                          dataSubQuestLists.map((sb) =>
+                                            sb.sub_questId === item1.sub_quests.id && sb.choice === ch
+                                              ?
+                                              <div className='flex items-baseline gap-2 mt-3 ml-7'>
+                                                <Checkbox checked />
+                                                <p
+                                                  className={
+                                                    sb.sub_quest_listname === 'ไม่มีการดำเนินการ'
+                                                      ? 'text-red-700'
+                                                      : 'text-green-700'
+                                                  }
+                                                >
+                                                  {sb.sub_quest_listname}
+                                                </p>
+                                              </div>
+                                              : null
+                                          )
                                         )
                                       }
                                     </div>
@@ -257,19 +289,29 @@ const FormApproveManagement_SSJ = () => {
                                 </td>
                                 <td className='text-center border-l'>
                                   {
-                                    item1.sub_quests.sub_quest_lists.map((it1) =>
-                                      it1.choice === item1.check
-                                        ? <p className='font-bold'>{it1.sub_quest_total_point}</p>
-                                        : <></>
+                                    item1.check.split(",").map((ch) =>
+                                      dataSubQuestLists.map((sb) =>
+                                        sb.sub_questId === item1.sub_quests.id && sb.choice === ch
+                                          ?
+                                          <div className='flex justify-center items-baseline gap-2 mt-3'>
+                                            <p className='font-bold'>{sb.sub_quest_total_point}</p>
+                                          </div>
+                                          : null
+                                      )
                                     )
                                   }
                                 </td>
                                 <td className='text-center border-l'>
-                                  {
-                                    item1.sub_quests.sub_quest_lists.map((it2) =>
-                                      it2.choice === item1.check
-                                        ? <p className='font-bold'>{it2.sub_quest_require_point}</p>
-                                        : <></>
+                                {
+                                    item1.check.split(",").map((ch) =>
+                                      dataSubQuestLists.map((sb) =>
+                                        sb.sub_questId === item1.sub_quests.id && sb.choice === ch
+                                          ?
+                                          <div className='flex justify-center items-baseline gap-2 mt-3'>
+                                            <p className='font-bold'>{sb.sub_quest_require_point}</p>
+                                          </div>
+                                          : null
+                                      )
                                     )
                                   }
                                 </td>

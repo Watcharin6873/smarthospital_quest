@@ -12,12 +12,7 @@ const HomeUsers = () => {
   const user = useGlobalStore((state) => state.user)
   const token = useGlobalStore((state) => state.token)
   const [listPoint, setListPoint] = useState([])
-  const [cyberData, setCyberData] = useState({
-    cyber_level: "",
-    cyber_image: "",
-    usersId: "",
-    hcode: ""
-  })
+  const [cyberData, setCyberData] = useState(null)
 
 
   useEffect(() => {
@@ -283,17 +278,18 @@ const HomeUsers = () => {
           <div className='p-2 flex justify-between'>
             <div className='text-slate-400'><p>ระดับ Cyber security</p></div>
             <div className='flex text-green-700'>
-              {
+            <p className='text-red-500'>-</p>
+              {/* {
                 cyberData.cyber_level === 'Green'
                   ? <p className='text-green-700'>เขียว</p>
                   : cyberData.cyber_level === 'Yellow'
                     ? <p className='text-yellow-400'>เหลือง</p>
                     : cyberData.cyber_level === 'Red'
                       ? <p className='text-red-500'>แดง</p>
-                      : null
+                      : <p className='text-red-500'>-</p>
 
 
-              }
+              } */}
             </div>
           </div>
         </div>

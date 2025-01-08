@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import useGlobalStore from '../../../store/global-store'
 import { getListQuests } from '../../../api/Quest'
-import { Select, Button, Divider, Form, Input, Checkbox, InputNumber, Modal, Upload, Radio, Space } from 'antd'
+import { Select, Button, Divider, Form, Input, Checkbox, InputNumber, Modal, Upload, Radio, Space, Row } from 'antd'
 import { ExclamationCircleFilled, UploadOutlined } from '@ant-design/icons'
 import { getEvaluateByHosp, getListSubQuestsForEvaluate, saveEvaluates } from '../../../api/Evaluate'
 import { CircleCheck, CircleX, MousePointer, Save } from 'lucide-react'
@@ -294,37 +294,62 @@ const FormEvaluateManagement = () => {
                               </Form.Item>
 
                               {
-                                item.id === 70 || item.id === 73 || item.id === 76 || item.id === 81 || item.id === 85 ||
-                                  item.id === 94 || item.id === 98 || item.id === 125 || item.id === 130
+                                item.id === 76
                                   ?
                                   <Form.Item
                                     name={"check" + item.id}
                                     className='ml-16 mt-1'
                                   >
-                                    <Radio.Group>
-                                      <Space direction='vertical'>
-                                        {
-                                          item.sub_quest_lists.map((it1, k1) => (
-                                            it1.sub_questId === item.id
-                                              ? <Radio className='text-green-700' value={"C" + it1.id}>{it1.sub_quest_listname}</Radio>
-                                              : null
-                                          ))
-                                        }
-                                      </Space>
-                                    </Radio.Group>
+                                    <Checkbox.Group style={{display:'inline-block'}}>
+                                      {
+                                        item.sub_quest_lists.map((it1, k1) => (
+                                          it1.sub_questId === item.id
+                                            ?
+                                            <>
+                                              <div>
+                                                <div key={k1} className='flex gap-1'>
+                                                  <Checkbox value={it1.choice} /><p className='text-green-700'>{it1.sub_quest_listname}</p>
+                                                </div>
+                                              </div>
+                                            </>
+                                            : null
+                                        ))
+                                      }
+                                    </Checkbox.Group>
+
                                   </Form.Item>
                                   :
-                                  <Form.Item
-                                    name={"check" + item.id}
-                                    className='ml-16 mt-1'
-                                  >
-                                    <Radio.Group>
-                                      <Space direction='vertical'>
-                                        <Radio value="true" className='text-green-700'>มีการดำเนินการ</Radio>
-                                        <Radio value="false" className='text-red-700'>ไม่มีการดำเนินการ</Radio>
-                                      </Space>
-                                    </Radio.Group>
-                                  </Form.Item>
+                                  item.id === 70 || item.id === 73 || item.id === 81 || item.id === 85 ||
+                                    item.id === 94 || item.id === 98 || item.id === 125 || item.id === 130
+                                    ?
+                                    <Form.Item
+                                      name={"check" + item.id}
+                                      className='ml-16 mt-1'
+                                    >
+                                      <Radio.Group>
+                                        <Space direction='vertical'>
+                                          {
+                                            item.sub_quest_lists.map((it1, k1) => (
+                                              it1.sub_questId === item.id
+                                                ? <Radio className='text-green-700' value={it1.choice}>{it1.sub_quest_listname}</Radio>
+                                                : null
+                                            ))
+                                          }
+                                        </Space>
+                                      </Radio.Group>
+                                    </Form.Item>
+                                    :
+                                    <Form.Item
+                                      name={"check" + item.id}
+                                      className='ml-16 mt-1'
+                                    >
+                                      <Radio.Group>
+                                        <Space direction='vertical'>
+                                          <Radio value="true" className='text-green-700'>มีการดำเนินการ</Radio>
+                                          <Radio value="false" className='text-red-700'>ไม่มีการดำเนินการ</Radio>
+                                        </Space>
+                                      </Radio.Group>
+                                    </Form.Item>
                               }
                             </div>
                             <div className='text-center border'>

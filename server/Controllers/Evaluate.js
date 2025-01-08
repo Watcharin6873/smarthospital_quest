@@ -122,13 +122,6 @@ exports.getListEvaluateByHosp = async (req, res) => {
         //                 usersId: true
         //             }
         //         },
-        //         approve_zones: {
-        //             select: {
-        //                 id: true,
-        //                 zone_approved: true,
-        //                 usersId: true
-        //             }
-        //         }
         //     }
         // })
 
@@ -141,6 +134,43 @@ exports.getListEvaluateByHosp = async (req, res) => {
                 LEFT JOIN Sub_quest AS t3 
                 ON t1.sub_questId = t3.id
                 WHERE hcode = ${hcode}`
+
+        res.json(result)
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Server Error!' })
+    }
+}
+
+exports.getListEvaluateByHosp2 = async (req, res) =>{
+    try {
+        //Code
+        const { hcode } = req.params
+
+        const result = await prisma.evaluate.findMany({
+            where:{hcode: hcode},
+            select:{
+                id: true,
+                category_questId: true,
+                questId: true,
+                sub_questId: true,
+                sub_quests:{
+                    select:{
+                        id: true,
+                        sub_quest_name: true
+                    }
+                },
+                check: true,
+                hcode: true,
+                userId: true,
+                file_name: true,
+                ssj_approve: true,
+                zone_approve: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        })
 
         res.json(result)
 
@@ -504,8 +534,8 @@ exports.updateChoiceEvaluate = async (req, res) => {
         await prisma.evaluate.update({
             where: { id: Number(id) },
             data: {
-                check,
-                userId,
+                check:String(check),
+                userId: userId,
                 updatedAt: new Date()
             }
         })

@@ -65,11 +65,10 @@ const FormUsermanagement_Zone = () => {
 
     },
     {
-      title: 'ชื่อ',
-      align: 'center',
+      title: 'ชื่อ-นามสกุล',
       render: ({ title_th, firstname_th, lastname_th }) =>
         <>
-          <span style={{ fontSize: '14px' }}>{title_th} {firstname_th} {lastname_th}</span>
+          <span style={{ fontSize: '14px', marginLeft:'5px' }}>{title_th} {firstname_th} {lastname_th}</span>
         </>
 
     },

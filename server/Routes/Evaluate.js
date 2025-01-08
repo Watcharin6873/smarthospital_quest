@@ -5,6 +5,7 @@ const {
     getListEvaluateAll,
     getEvaluateByHosp,
     getListEvaluateByHosp,
+    getListEvaluateByHosp2,
     getListEvaluateByProv,
     getListEvaluateByZone,
     refreshEvaluate,
@@ -38,6 +39,8 @@ router.post('/saveEvaluates2', authCheck, uploadAllTypeFile, saveEvaluates2)
 router.post('/uploadCyberImageFile', authCheck, uploadCyberImage, uploadCyberImageFile)
 
 router.get('/getListEvaluateByHosp/:hcode', authCheck, getListEvaluateByHosp)
+
+router.get('/getListEvaluateByHosp2/:hcode', authCheck, getListEvaluateByHosp2)
 
 router.get('/getListEvaluateByProv/:province', authCheck, getListEvaluateByProv)
 

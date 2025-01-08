@@ -8,12 +8,15 @@ const {
     getSubQuestById,
     updateSubQuest,
     removeSubQuest,
-    getSubQuestByCatId
+    getSubQuestByCatId,
+    getSubQuestList
 } = require('../Controllers/SubQuest')
 const {authCheck, adminCheck} = require('../Middleware/Auth')
 
 
 router.post('/createSubQuest', authCheck, adminCheck, createSubQuest)
+
+router.get('/getSubQuestList', authCheck, getSubQuestList)
 
 router.post('/createSubQuestList', authCheck, adminCheck, createSubQuestList)
 

@@ -109,7 +109,7 @@ const Register = () => {
     position: value.position,
     address: value.address,
     level: "4",
-    objective: "hosp_approve"
+    objective: "responder"
   }
 
   // console.log('HospValue: ', providerData)

@@ -5,7 +5,8 @@ import {
     getDocumentsFromEvaluate,
     getEvaluateById,
     getEvidenceFromEvaluate,
-    getListEvaluateByHosp,
+    getListEvaluateByHosp2,
+    getSubQuetList,
     refreshEvaluate,
     saveDocuments,
     updateChoiceEvaluate,
@@ -37,12 +38,24 @@ const FormReportHosp = () => {
     const [category_questId, setCategory_questtId] = useState('')
     const [document, setDocument] = useState()
     const [evidence, setEvidence] = useState()
+    const [subQuestList, setSubQuestList] = useState([])
 
     useEffect(() => {
         loadListEvaluate(token)
         loadListCategoryQuest(token)
         loadListQuest(token)
+        loadSubQuestList(token)
     }, [])
+
+    const loadSubQuestList = async () => {
+        await getSubQuetList(token)
+            .then(res => {
+                setSubQuestList(res.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
 
     const loadListCategoryQuest = async () => {
         await getListTopic(token)
@@ -73,9 +86,8 @@ const FormReportHosp = () => {
     const hcode = user.hcode
     const loadListEvaluate = async () => {
         setIsLoading(true)
-        await getListEvaluateByHosp(token, hcode)
+        await getListEvaluateByHosp2(token, hcode)
             .then(res => {
-                console.log('ListEva: ', res.data)
                 setListEvaluate(res.data)
             })
             .catch(err => {
@@ -89,9 +101,10 @@ const FormReportHosp = () => {
         setCategory_questtId(e)
         setSearchCategory(listEvaluate.filter(f => f.category_questId === e))
         setSearchQuest(listQuest.filter(f => f.category_questId === e))
+        // loadSubQuestList76(token)
     }
 
-    console.log('Data: ', category_questId)
+    // console.log('Data: ', listEvaluate)
 
 
     const showUploadModal = async (value) => {
@@ -132,6 +145,24 @@ const FormReportHosp = () => {
         })
     })
 
+    // const dataEvaluateById = evaluateById.map((data)=>({
+    //     id: data.id,
+    //     category_questId: data.category_questId,
+    //     questId: data.questId,
+    //     sub_questId: data.sub_questId,
+    //     check: data.check.split(","),
+    //     hcode: data.hcode,
+    //     userId: data.userId,
+    //     file_name: data.file_name,
+    //     ssj_approve: data.ssj_approve,
+    //     zone_approve: data.zone_approve,
+    //     createdAt: data.createdAt,
+    //     updatedAt: data.updatedAt
+    // }))
+
+
+    // console.log("dataById: ", dataEvaluateById)
+
 
 
     const showUpdateModal = async (id) => {
@@ -139,7 +170,7 @@ const FormReportHosp = () => {
         setIsModalUpdateOpen(true)
         await getEvaluateById(token, id)
             .then(res => {
-                console.log(res.data)
+                console.log("GetById: ", res.data)
                 setEvaluateById(res.data)
             })
             .catch(err => {
@@ -150,6 +181,7 @@ const FormReportHosp = () => {
 
     useEffect(() => {
         formUpdate.setFieldsValue({
+            id: evaluateById.id,
             category_questId: evaluateById.category_questId,
             questId: evaluateById.questId,
             sub_questId: evaluateById.sub_questId,
@@ -163,6 +195,7 @@ const FormReportHosp = () => {
         const values = {
             ...fieldValue, id: evaluateById.id
         }
+        console.log('Values: ', values)
         await updateChoiceEvaluate(token, values)
             .then(res => {
                 toast.success(res.data.message)
@@ -204,7 +237,7 @@ const FormReportHosp = () => {
         console.log(values)
         getDocumentByEvaluateByHosp(token, values, hcode)
             .then(res => {
-                console.log('Document: ', res.data)
+                // console.log('Document: ', res.data)
                 if (res.data) {
                     window.open(`https://bdh-service.moph.go.th/api/smarthosp/file-uploads/${res.data.file_name}`, "_blank", "noreferrer")
                 } else {
@@ -217,7 +250,7 @@ const FormReportHosp = () => {
     }
 
     const showEvidence = (evd) => {
-        console.log('EVD: ', evd)
+        // console.log('EVD: ', evd)
         getEvidenceFromEvaluate(token, evd.id, hcode)
             .then(res => {
                 console.log('Evidence: ', res.data)
@@ -230,6 +263,40 @@ const FormReportHosp = () => {
 
 
     }
+
+
+    const dataSearchCategorys = searchCategory.map((item) => ({
+        id: item.id,
+        category_questId: item.category_questId,
+        questId: item.questId,
+        sub_questId: item.sub_questId,
+        sub_quest_name: item.sub_quests.sub_quest_name,
+        check: item.check.split(","),
+        hcode: item.hcode,
+        userId: item.userId,
+        file_name: item.file_name,
+        ssj_approve: item.ssj_approve,
+        zone_approve: item.zone_approve,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+    }))
+
+    const dataSubQuestLists = subQuestList.map((item) => ({
+        id: item.id,
+        sub_questId: item.sub_questId,
+        choice: item.choice,
+        sub_quest_listname: item.sub_quest_listname,
+        sub_quest_total_point: item.sub_quest_total_point,
+        sub_quest_require_point: item.sub_quest_require_point,
+        description: item.description,
+        necessary: item.necessary,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+    }))
+
+
+    console.log('Data1: ', dataSearchCategorys)
+    console.log('Data2: ', dataSubQuestLists)
 
 
 
@@ -293,37 +360,93 @@ const FormReportHosp = () => {
                                                 <tr key={k1} className='border'>
                                                     <td className='p-1 text-amber-950 font-bold' colSpan={6}>{item1.quest_name}</td>
                                                 </tr>
-                                                {searchCategory.map((item2, k2) => (
+                                                {dataSearchCategorys.map((item2, k2) => (
                                                     item1.id === item2.questId
                                                         ?
                                                         <tr key={k2} className='border'>
                                                             <td className='pl-5 pr-1 py-1 border-r w-screen' style={{ fontSize: '15px' }}>
                                                                 <p className='font-bold'>{item2.sub_quest_name}</p>
-                                                                <div className='flex gap-1 ml-16 p-2'>
-                                                                    <Checkbox checked />
-                                                                    <p className={
-                                                                        item2.sub_quest_listname === 'ไม่มีการดำเนินการ'
-                                                                            ? 'text-red-700'
-                                                                            : 'text-green-700'
-                                                                    }>
-                                                                        {item2.sub_quest_listname}
-                                                                    </p>
-                                                                </div>
+                                                                {
+                                                                    item2.check?.map((ch) =>
+                                                                        dataSubQuestLists.map((sb) =>
+                                                                            sb.sub_questId === item2.sub_questId && sb.choice === ch
+                                                                                ?
+                                                                                <div className='flex items-baseline gap-2 mt-3 ml-7'>
+                                                                                    <Checkbox checked />
+                                                                                    <p
+                                                                                        className={
+                                                                                            sb.sub_quest_listname === 'ไม่มีการดำเนินการ'
+                                                                                                ? 'text-red-700'
+                                                                                                : 'text-green-700'
+                                                                                        }
+                                                                                    >
+                                                                                        {sb.sub_quest_listname}
+                                                                                    </p>
+                                                                                </div>
+                                                                                : null
+                                                                        )
+                                                                    )
+                                                                }
                                                             </td>
                                                             <td className='text-center border-r px-1' style={{ fontSize: '15px' }}>
-                                                                <div className='flex justify-center'>
-                                                                    {
-                                                                        item2.necessary === 1
-                                                                            ? <CircleCheck size={18} className='text-green-600' />
-                                                                            : <CircleX size={18} className='text-red-500' />
-                                                                    }
-                                                                </div>
+                                                                {
+                                                                    item2.check?.map((ch) =>
+                                                                        dataSubQuestLists.map((sb) =>
+                                                                            sb.sub_questId === item2.sub_questId && sb.choice === ch
+                                                                                ?
+                                                                                <>
+                                                                                    {
+                                                                                        sb.necessary === true
+                                                                                            ?
+                                                                                            <div className='flex justify-center p-1'>
+                                                                                                <CircleCheck size={18} className='text-green-600' />
+                                                                                            </div>
+                                                                                            :
+                                                                                            <div className='flex justify-center p-1'>
+                                                                                                <CircleX size={18} className='text-red-500' />
+                                                                                            </div>
+                                                                                    }
+                                                                                </>
+                                                                                : null
+                                                                        )
+                                                                    )
+                                                                }
                                                             </td>
                                                             <td className='text-center border-r'>
-                                                                <p className='font-bold'>{item2.sub_quest_total_point}</p>
+                                                                {
+                                                                    item2.check?.map((ch) =>
+                                                                        dataSubQuestLists.map((sb) =>
+                                                                            sb.sub_questId === item2.sub_questId && sb.choice === ch
+                                                                                ?
+                                                                                <div>
+                                                                                    <p className='font-bold'>
+                                                                                        {
+                                                                                            sb.sub_quest_total_point
+                                                                                        }
+                                                                                    </p>
+                                                                                </div>
+                                                                                : null
+                                                                        )
+                                                                    )
+                                                                }
                                                             </td>
                                                             <td className='text-center border-r' style={{ fontSize: '15px' }}>
-                                                                <p className='font-bold'>{item2.sub_quest_require_point}</p>
+                                                                {
+                                                                    item2.check?.map((ch) =>
+                                                                        dataSubQuestLists.map((sb) =>
+                                                                            sb.sub_questId === item2.sub_questId && sb.choice === ch
+                                                                                ?
+                                                                                <div>
+                                                                                    <p className='font-bold'>
+                                                                                        {
+                                                                                            sb.sub_quest_require_point
+                                                                                        }
+                                                                                    </p>
+                                                                                </div>
+                                                                                : null
+                                                                        )
+                                                                    )
+                                                                }
                                                             </td>
                                                             <td className='text-center border-r' style={{ fontSize: '15px' }}>
                                                                 {
@@ -331,7 +454,7 @@ const FormReportHosp = () => {
                                                                         ?
                                                                         <>
                                                                             <div className='flex justify-center items-center'>
-                                                                                <Button onClick={()=> showEvidence(item2)}>
+                                                                                <Button onClick={() => showEvidence(item2)}>
                                                                                     <EyeTwoTone /> ดูไฟล์หลักฐาน
                                                                                 </Button>
                                                                                 {/* <Button onClick={() => showEvidence(item2)}>
@@ -489,7 +612,6 @@ const FormReportHosp = () => {
                                 </div>
                             </Form.Item>
                             <div className='flex justify-between'>
-
                                 <div>
                                     <Form.Item
                                         name='check'
@@ -501,38 +623,41 @@ const FormReportHosp = () => {
                                             }
                                         ]}
                                     >
-                                        <Radio.Group>
-                                            <Space direction='vertical'>
-                                                {
-                                                    evaluateById?.sub_quests?.sub_quest_lists?.map((ch) => (
-                                                        <Radio value={ch.choice}
-                                                            className={
-                                                                ch.sub_quest_listname === "ไม่มีการดำเนินการ"
-                                                                    ? `text-red-700 pl-7`
-                                                                    : `text-green-700 pl-7`
-                                                            }
-                                                        >
-                                                            {ch.sub_quest_listname}
-                                                        </Radio>
-                                                    ))
-                                                }
-                                                {/* {
-                                                    choiceRadio.map((ch) => (
-                                                        <Radio value={ch.choice}
-                                                        className={
-                                                            ch.sub_quest_listname === "ไม่มีการดำเนินการ"
-                                                                ? `text-red-700`
-                                                                : `text-green-700`
+                                        {
+                                            evaluateById.sub_questId === 76
+                                                ?
+                                                <>
+                                                    <Checkbox.Group style={{ display: 'inline-block' }}>
+                                                        {
+                                                            evaluateById?.sub_quests?.sub_quest_lists?.map((it1, k1) => (
+                                                                <div className='flex gap-1'>
+                                                                    <Checkbox key={k1} value={it1.choice} /><p className='text-green-700'>{it1.sub_quest_listname}</p>
+                                                                </div>
+                                                            ))
                                                         }
-                                                        >
-                                                            {ch.sub_quest_listname}
-                                                        </Radio>
-                                                    ))
-                                                } */}
-                                                {/* <Radio value="true" className='text-green-700'>มีการดำเนินการ</Radio>
-                                                <Radio value="false" className='text-red-700'>ไม่มีการดำเนินการ</Radio> */}
-                                            </Space>
-                                        </Radio.Group>
+                                                    </Checkbox.Group>
+                                                </>
+                                                :
+                                                <>
+                                                    <Radio.Group>
+                                                        <Space direction='vertical'>
+                                                            {
+                                                                evaluateById?.sub_quests?.sub_quest_lists?.map((ch) => (
+                                                                    <Radio value={ch.choice}
+                                                                        className={
+                                                                            ch.sub_quest_listname === "ไม่มีการดำเนินการ"
+                                                                                ? `text-red-700 pl-7`
+                                                                                : `text-green-700 pl-7`
+                                                                        }
+                                                                    >
+                                                                        {ch.sub_quest_listname}
+                                                                    </Radio>
+                                                                ))
+                                                            }
+                                                        </Space>
+                                                    </Radio.Group>
+                                                </>
+                                        }
                                     </Form.Item>
                                 </div>
                             </div>

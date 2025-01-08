@@ -139,6 +139,7 @@ exports.getListSubQuestsForEvaluate = async (req, res) => {
                     select: {
                         id: true,
                         sub_questId: true,
+                        choice: true,
                         sub_quest_listname: true,
                         sub_quest_total_point: true,
                         sub_quest_require_point: true,
@@ -165,6 +166,23 @@ exports.getSubQuestById = async (req, res) => {
             where: { id: Number(id) }
         })
         res.json(sub_quest)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Server error!"
+        })
+    }
+}
+
+
+exports.getSubQuestList = async (req, res) => {
+    try {
+        //Code
+        const { sub_questId } = req.query
+        const sub_quest_list = await prisma.sub_quest_list.findMany({
+            where: { sub_questId: Number(sub_questId) }
+        })
+        res.json(sub_quest_list)
     } catch (err) {
         console.log(err)
         res.status(500).json({

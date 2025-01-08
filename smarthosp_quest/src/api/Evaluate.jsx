@@ -1,6 +1,17 @@
 import axios from "axios";
 
 
+//Get SubQuestList
+export const getSubQuetList = async (token) =>{
+    return await axios.get(import.meta.env.VITE_APP_API + `/getSubQuetList`,
+        {
+            headers: {
+                Authorization: `Bearer ` + token
+            }
+        }
+    )
+}
+
 //Get Evaluate all
 export const getListEvaluateAll = async () =>{
     return await axios.get(import.meta.env.VITE_APP_API + `/getListEvaluateAll`)
@@ -32,6 +43,17 @@ export const saveEvaluates = async (token, values) => {
 //Get Evaluate by hcode
 export const getListEvaluateByHosp = async (token, values) => {
     return await axios.get(import.meta.env.VITE_APP_API + `/getListEvaluateByHosp/` + values,
+        {
+            headers: {
+                Authorization: `Bearer ` + token
+            }
+        }
+    )
+}
+
+//Get Evaluate by hcode v2
+export const getListEvaluateByHosp2 = async (token, values) => {
+    return await axios.get(import.meta.env.VITE_APP_API + `/getListEvaluateByHosp2/` + values,
         {
             headers: {
                 Authorization: `Bearer ` + token

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import useGlobalStore from '../../../../store/global-store'
-import { getDocumentByEvaluateByHosp, getListEvaluateByZone, zoneChangeStatusApprove } from '../../../../api/Evaluate'
+import { getDocumentByEvaluateByHosp, getListEvaluateByZone, getSubQuetList, zoneChangeStatusApprove } from '../../../../api/Evaluate'
 import { Button, Checkbox, Divider, Empty, Form, Image, Input, Select, Switch } from 'antd'
 import { getListQuests } from '../../../../api/Quest'
 import { toast } from 'react-toastify'
@@ -16,10 +16,11 @@ const FormApproveInfrastructure_Zone = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [listQuests, setListQuests] = useState([])
   const [evaluateByZone, setEvaluateByZone] = useState([])
+  const [subQuestList, setSubQuestList] = useState([])
   const [searchQuery, setSearchQuery] = useState([])
   const [values, setValues] = useState({ provcode: "" })
   const [documentFile, setDocumentFile] = useState(null)
-  const [clientReady, setClientReady] = useState(false);
+  const [clientReady, setClientReady] = useState(false)
 
 
   const [formZoneApprove] = Form.useForm()
@@ -28,7 +29,33 @@ const FormApproveInfrastructure_Zone = () => {
   useEffect(() => {
     loadListEvaluateByZone(token, zone)
     setClientReady(true);
+    loadSubQuestList(token)
   }, [])
+
+
+  const loadSubQuestList = async () => {
+    await getSubQuetList(token)
+      .then(res => {
+        setSubQuestList(res.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
+
+  const dataSubQuestLists = subQuestList.map((item) => ({
+    id: item.id,
+    sub_questId: item.sub_questId,
+    choice: item.choice,
+    sub_quest_listname: item.sub_quest_listname,
+    sub_quest_total_point: item.sub_quest_total_point,
+    sub_quest_require_point: item.sub_quest_require_point,
+    description: item.description,
+    necessary: item.necessary,
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+  }))
 
 
   const loadListQuests = async () => {
@@ -45,7 +72,7 @@ const FormApproveInfrastructure_Zone = () => {
     setIsLoading(true)
     await getListEvaluateByZone(token, zone)
       .then(res => {
-        console.log(res.data)
+        // console.log(res.data)
         setEvaluateByZone(res.data)
       })
       .catch(err => {
@@ -79,25 +106,22 @@ const FormApproveInfrastructure_Zone = () => {
   }))
 
 
-  console.log("Data: ", dataSource)
+  // console.log("Data: ", dataSource)
 
   const uniqueProv = [...new Map(dataSource.map(item => [item['provcode', 'provname'], item])).values()]
-  const uniqueHosp = [...new Map(dataSource.map(item => [item['hcode', 'hname_th'], item])).values()]
+  const uniqueHosp = [...new Map(dataSource.map(item => [item['provcode', 'hcode', 'hname_th'], item])).values()]
+
+  const testFilter = uniqueHosp.filter(f => f.provcode === values.provcode)
 
   const optionProv = uniqueProv.sort((a, b) => a - b).map((item) => ({
     value: item.provcode,
     label: item.provname
   }))
 
-  const optionHosp = uniqueHosp.map((item) =>
-    values.provcode === item.provcode
-      ?
-      {
-        value: item.hcode,
-        label: item.hname_th + ' [' + item.hcode + ']'
-      }
-      : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-  )
+  const optionHosp2 = testFilter.map((item1) => ({
+    value: item1.hcode,
+    label: item1.hname_th + ' [' + item1.hcode + ']'
+  }))
 
   const handleChange = (provcode) => {
     setValues({ provcode: provcode })
@@ -113,7 +137,7 @@ const FormApproveInfrastructure_Zone = () => {
 
     await getDocumentByEvaluateByHosp(token, uniqueCatId, hcode)
       .then(res => {
-        console.log('Doc: ', res.data)
+        // console.log('Doc: ', res.data)
         setDocumentFile(res.data)
       })
       .catch(err => {
@@ -121,12 +145,17 @@ const FormApproveInfrastructure_Zone = () => {
       })
   }
 
+  // console.log('search: ', searchQuery)
+
   useEffect(() => {
     formZoneApprove.setFieldsValue({
       evaluateId: searchQuery.id,
       usersId: user.id,
-      province: user.province,
-      zone: user.zone
+      hcode: searchQuery.hcode,
+      hname_th: searchQuery.hname_th,
+      province: searchQuery.provname,
+      zone: user.zone,
+      zone_approve: true
     })
   })
 
@@ -149,7 +178,7 @@ const FormApproveInfrastructure_Zone = () => {
     console.log('Fialed: ', errorInfo)
   }
 
-  console.log('Data: ', searchQuery)
+  // console.log('Data: ', searchQuery)
 
   const searchQuets = listQuests.filter(f => f.category_questId === 1)
 
@@ -230,7 +259,7 @@ const FormApproveInfrastructure_Zone = () => {
                   (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                 }
                 placeholder='กรุณาเลือกหน่วยบริการ...'
-                options={optionHosp}
+                options={optionHosp2}
                 style={{ width: '250px' }}
               />
             </Form.Item>
@@ -320,9 +349,23 @@ const FormApproveInfrastructure_Zone = () => {
                                     <Input />
                                   </Form.Item>
                                   <Form.Item
+                                    name={'hcode' + item2.id}
+                                    hidden={true}
+                                    initialValue={item2.hcode}
+                                  >
+                                    <Input />
+                                  </Form.Item>
+                                  <Form.Item
+                                    name={'hname_th' + item2.id}
+                                    hidden={true}
+                                    initialValue={item2.hname_th}
+                                  >
+                                    <Input />
+                                  </Form.Item>
+                                  <Form.Item
                                     name={'province' + item2.id}
                                     hidden={true}
-                                    initialValue={user.province}
+                                    initialValue={item2.provname}
                                   >
                                     <Input />
                                   </Form.Item>
@@ -333,22 +376,35 @@ const FormApproveInfrastructure_Zone = () => {
                                   >
                                     <Input />
                                   </Form.Item>
+                                  <Form.Item
+                                    name={'zone_approve' + item2.id}
+                                    hidden={true}
+                                    initialValue={true}
+                                  >
+                                    <Input />
+                                  </Form.Item>
                                   <div className='ml-7'>
                                     <p className='text-slate-600'>{item2.sub_quest_name}</p>
-                                    <div className='pl-10 flex gap-2'>
-                                      <Checkbox checked />
+                                    <div className='pl-10 gap-2'>
                                       {
-                                        item2.sub_quest_list.map((it) =>
-                                          it.choice === item2.check
-                                            ?
-                                            <p className={
-                                              it.sub_quest_listname === 'ไม่มีการดำเนินการ'
-                                                ? 'text-red-700'
-                                                : 'text-green-700'
-                                            }>
-                                              {it.sub_quest_listname}
-                                            </p>
-                                            : <></>
+                                        item2.check.split(",").map((ch) =>
+                                          dataSubQuestLists.map((sb) =>
+                                            sb.sub_questId === item2.sub_questId && sb.choice === ch
+                                              ?
+                                              <div className='flex items-baseline gap-2 mt-3 ml-7'>
+                                                <Checkbox checked />
+                                                <p
+                                                  className={
+                                                    sb.sub_quest_listname === 'ไม่มีการดำเนินการ'
+                                                      ? 'text-red-700'
+                                                      : 'text-green-700'
+                                                  }
+                                                >
+                                                  {sb.sub_quest_listname}
+                                                </p>
+                                              </div>
+                                              : null
+                                          )
                                         )
                                       }
                                     </div>
@@ -356,19 +412,29 @@ const FormApproveInfrastructure_Zone = () => {
                                 </td>
                                 <td className='text-center border-l'>
                                   {
-                                    item2.sub_quest_list.map((it1) =>
-                                      it1.choice === item2.check
-                                        ? <p className=''>{it1.sub_quest_total_point}</p>
-                                        : <></>
+                                    item2.check.split(",").map((ch) =>
+                                      dataSubQuestLists.map((sb) =>
+                                        sb.sub_questId === item2.sub_questId && sb.choice === ch
+                                          ?
+                                          <div className='flex justify-center items-baseline gap-2 mt-3'>
+                                            <p className='font-bold'>{sb.sub_quest_total_point}</p>
+                                          </div>
+                                          : null
+                                      )
                                     )
                                   }
                                 </td>
                                 <td className='text-center border-l'>
-                                  {
-                                    item2.sub_quest_list.map((it2) =>
-                                      it2.choice === item2.check
-                                        ? <p className=''>{it2.sub_quest_require_point}</p>
-                                        : <></>
+                                {
+                                    item2.check.split(",").map((ch) =>
+                                      dataSubQuestLists.map((sb) =>
+                                        sb.sub_questId === item2.sub_questId && sb.choice === ch
+                                          ?
+                                          <div className='flex justify-center items-baseline gap-2 mt-3'>
+                                            <p className='font-bold'>{sb.sub_quest_require_point}</p>
+                                          </div>
+                                          : null
+                                      )
                                     )
                                   }
                                 </td>

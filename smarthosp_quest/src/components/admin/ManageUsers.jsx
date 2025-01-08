@@ -45,7 +45,8 @@ const ManageUsers = () => {
         setSearchQuery(listUsers.filter(f =>
             f.hcode.toLowerCase().includes(e.target.value) ||
             f.hname_th.toLowerCase().includes(e.target.value) ||
-            f.firstname_th.toLowerCase().includes(e.target.value)
+            f.firstname_th.toLowerCase().includes(e.target.value)||
+            f.zone.toLowerCase().includes(e.target.value)
         ))
     }
 
@@ -73,19 +74,19 @@ const ManageUsers = () => {
     const objectiveData = [
         {
             type: 'Administrator',
-            type_name: <Tag className='w-full bg-green-500 text-center text-white'>Administrator</Tag>
+            type_name: <Tag className='w-full bg-green-500 text-center text-white'>ผู้ดูแลระบบ</Tag>
         },
         {
             type: 'zone_approve',
-            type_name: <Tag className='w-full bg-blue-500 text-center text-white'>Zone as approve</Tag>
+            type_name: <Tag className='w-full bg-blue-500 text-center text-white'>คคก.เขตสุขภาพ</Tag>
         },
         {
             type: 'prov_approve',
-            type_name: <Tag className='w-full bg-orange-300 text-center text-white'>Prov as approve</Tag>
+            type_name: <Tag className='w-full bg-orange-300 text-center text-white'>คคก.จังหวัด</Tag>
         },
         {
             type: 'responder',
-            type_name: <Tag className='w-full bg-yellow-400 text-center text-white'>Responder</Tag>
+            type_name: <Tag className='w-full bg-yellow-400 text-center text-white'>ผู้ประเมิน รพ.</Tag>
         }
     ]
 
@@ -105,8 +106,7 @@ const ManageUsers = () => {
 
         },
         {
-            title: 'ชื่อ',
-            align: 'center',
+            title: 'ชื่อ-นามสกุล',
             render: ({ title_th, firstname_th, lastname_th }) =>
                 <>
                     <span style={{ fontSize: '14px' }}>{title_th} {firstname_th} {lastname_th}</span>
@@ -118,6 +118,14 @@ const ManageUsers = () => {
             render: ({ hname_th, hcode }) =>
                 <>
                     <span style={{ fontSize: '14px' }}>{hname_th} [{hcode}]</span>
+                </>
+
+        },
+        {
+            title: <p className='text-center'>เขตสุขภาพ</p>,
+            render: ({ zone }) =>
+                <>
+                    <span style={{ fontSize: '14px' }}>เขตสุขภาพที่ {Number(zone)}</span>
                 </>
 
         },
@@ -198,16 +206,16 @@ const ManageUsers = () => {
                     </p>
                 </>
         },
-        {
-            title: 'วันที่แก้ไข',
-            align: 'center',
-            render: ({ updatedAt }) =>
-                <>
-                    <p style={{ fontSize: '14px' }}>
-                        {dayjs(updatedAt).locale('th').format('DD MMM BB')}
-                    </p>
-                </>
-        },
+        // {
+        //     title: 'วันที่แก้ไข',
+        //     align: 'center',
+        //     render: ({ updatedAt }) =>
+        //         <>
+        //             <p style={{ fontSize: '14px' }}>
+        //                 {dayjs(updatedAt).locale('th').format('DD MMM BB')}
+        //             </p>
+        //         </>
+        // },
         {
             title: 'จัดการ',
             align: 'center',
