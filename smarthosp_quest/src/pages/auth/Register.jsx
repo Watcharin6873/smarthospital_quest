@@ -59,7 +59,7 @@ const Register = () => {
 
             getProviderProfile(access_token, client_id, secret_key)
               .then(res => {
-                // console.log("ProviderProfile: ", res.data.data)
+                console.log("ProviderProfile: ", res.data.data)
                 setProviderProfile(res.data.data)
                 const lenghtHosp = res.data.data.organization
                 if (lenghtHosp.length > 0) {

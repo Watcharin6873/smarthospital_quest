@@ -1,4 +1,6 @@
 const prisma = require('../Config/Prisma')
+const fs = require('fs')
+// const baseDir = require('../file-uploads')
 
 
 exports.saveEvaluates = async (req, res) => {
@@ -14,6 +16,12 @@ exports.saveEvaluates = async (req, res) => {
         }))
 
         // console.log('Data: ', questValues)
+        // const check = await prisma.evaluate.findFirst({
+        //     where:{
+        //         hcode: req.body.map(f=> f.hcode),
+        //         sub_questId: req.body.map(f=> f.sub_questId)
+        //     }
+        // })
 
         const saveData = await prisma.evaluate.createMany({
             data: questValues
@@ -49,7 +57,7 @@ exports.saveEvaluates = async (req, res) => {
                 data: logValue
             })
 
-           
+
         }
         res.json({ message: `ประเมินผลสำเร็จ!` })
 
@@ -143,20 +151,20 @@ exports.getListEvaluateByHosp = async (req, res) => {
     }
 }
 
-exports.getListEvaluateByHosp2 = async (req, res) =>{
+exports.getListEvaluateByHosp2 = async (req, res) => {
     try {
         //Code
         const { hcode } = req.params
 
         const result = await prisma.evaluate.findMany({
-            where:{hcode: hcode},
-            select:{
+            where: { hcode: hcode },
+            select: {
                 id: true,
                 category_questId: true,
                 questId: true,
                 sub_questId: true,
-                sub_quests:{
-                    select:{
+                sub_quests: {
+                    select: {
                         id: true,
                         sub_quest_name: true
                     }
@@ -414,7 +422,7 @@ exports.getListEvaluateByZone = async (req, res) => {
                 }
             }
         })
-        
+
         // .$queryRaw`SELECT * FROM Evaluate LEFT JOIN Hospitals 
         // ON Evaluate.hcode = Hospitals.hcode JOIN Sub_quest_list ON Evaluate.sub_questId = Sub_quest_list.sub_questId 
         // AND Evaluate.check = Sub_quest_list.choice JOIN Sub_quest ON Evaluate.sub_questId = Sub_quest.id WHERE Hospitals.zone = ${zone}`
@@ -534,7 +542,7 @@ exports.updateChoiceEvaluate = async (req, res) => {
         await prisma.evaluate.update({
             where: { id: Number(id) },
             data: {
-                check:String(check),
+                check: String(check),
                 userId: userId,
                 updatedAt: new Date()
             }
@@ -625,14 +633,32 @@ exports.uploadFileById = async (req, res) => {
 
         console.log(data)
 
-        await prisma.evaluate.update({
+        const check = await prisma.evaluate.findFirst({
+            where: {
+                id: Number(req.params.id),
+                file_name: {
+                    not: null
+                }
+            }
+        })
+
+        if (check) {
+            return res.status(400).json({ message: 'มีการเพิ่มไฟล์ในหัวข้อนี้เรียบร้อยแล้ว!' })
+        }
+
+        const result = await prisma.evaluate.update({
             where: { id: Number(req.params.id) },
             data: {
                 file_name: data.file_name
             }
         })
 
-        res.json({ message: `เพิ่มข้อมูลสำเร็จ!` })
+        // res.json({ message: `เพิ่มข้อมูลสำเร็จ!` })
+
+        res.json({
+            message: `เพิ่มข้อมูลสำเร็จ!`,
+            data: result
+        })
 
     } catch (err) {
         console.log(err)
@@ -641,7 +667,37 @@ exports.uploadFileById = async (req, res) => {
 }
 
 
-exports.uploadCyberImageFile = async (req, res) =>{
+exports.removeFileById = async (req, res) => {
+    try {
+        //Code
+        const { id } = req.params
+        const find = await prisma.evaluate.findFirst({
+            where: {
+                id: Number(req.params.id)
+            }
+        })
+
+        console.log(find)
+
+        fs.unlinkSync(`file-uploads/${find.file_name}`)
+
+        await prisma.evaluate.update({
+            where: { id: Number(req.params.id) },
+            data: {
+                file_name: null
+            }
+        })
+
+        res.json({ message: 'ลบไฟล์หลักฐานนี้สำเร็จ!!' })
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Server Error!' })
+    }
+}
+
+
+exports.uploadCyberImageFile = async (req, res) => {
     try {
         //Code
         const data = req.body
@@ -650,7 +706,7 @@ exports.uploadCyberImageFile = async (req, res) =>{
         console.log(data)
 
         await prisma.cyber_level.create({
-            data:{
+            data: {
                 cyber_level: data.cyber_level,
                 cyber_image: data.cyber_image,
                 usersId: Number(data.usersId),
@@ -659,28 +715,28 @@ exports.uploadCyberImageFile = async (req, res) =>{
         })
 
 
-        res.json({message: `เพิ่มข้อมูลระดับ Cyber security เรียบร้อย!`})
-        
+        res.json({ message: `เพิ่มข้อมูลระดับ Cyber security เรียบร้อย!` })
+
     } catch (err) {
         console.log(err)
-        res.status(500).json({message: "Server error!"})
+        res.status(500).json({ message: "Server error!" })
     }
 }
 
 
-exports.getCyberImageData = async (req, res) =>{
+exports.getCyberSecurityLevelData = async (req, res) => {
     try {
         //Code
-        const {hcode} = req.query
-        const result = await prisma.cyber_level.findFirst({
-            where:{hcode: hcode}
+        const { hcode } = req.query
+        const result = await prisma.cyber_risk_level.findFirst({
+            where: { hcode: hcode }
         })
 
         res.json(result)
-        
+
     } catch (err) {
         console.log(err)
-        res.status(500).json({message:'Server error!'})
+        res.status(500).json({ message: 'Server error!' })
     }
 }
 
@@ -770,8 +826,8 @@ exports.zoneChangeStatusApprove = async (req, res) => {
         console.log(req.body)
 
         await prisma.evaluate.update({
-            where:{id: Number(id)},
-            data:{
+            where: { id: Number(id) },
+            data: {
                 zone_approve: zone_approve,
                 updatedAt: new Date()
             }
@@ -780,6 +836,32 @@ exports.zoneChangeStatusApprove = async (req, res) => {
         res.json({
             message: `Aprove หัวข้อประเมินนี้เรียบร้อย!`
         })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Sever error!"
+        })
+    }
+}
+
+exports.splitComma = async (req, res) => {
+    try {
+        //Code
+        const { hcode } = req.query
+        const result = await prisma.$queryRaw`SELECT ca.id AS category_questId, res.sub_quest_total_point, res.sub_quest_require_point
+                FROM Category_quest ca
+                LEFT JOIN (SELECT su.hcode, su.category_questId, SUM(su.sub_quest_total_point) sub_quest_total_point, SUM(su.sub_quest_require_point) sub_quest_require_point
+                FROM (SELECT tb1.id AS evaluateId, tb1.category_questId, tb1.questId, tb1.sub_questId, tb1.hcode, tb1.userId, tb1.c_check, tb2.sub_quest_listname,tb2.sub_quest_total_point,
+                    tb2.sub_quest_require_point, tb2.description, tb2.necessary
+                FROM (SELECT id,category_questId,questId,sub_questId,hcode,userId,SUBSTRING_INDEX(SUBSTRING_INDEX(t.check, ',', n.n), ',', -1) AS c_check
+                FROM Evaluate t 
+                CROSS JOIN (SELECT a.N + b.N * 10 + 1 n FROM (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4) a ,(SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4) b ORDER BY n ) n 
+                WHERE n.n <= 1 + (LENGTH(t.check) - LENGTH(REPLACE(t.check, ',', ''))) ORDER BY id,c_check) tb1
+                LEFT JOIN Sub_quest_list tb2 ON tb1.sub_questId = tb2.sub_questId AND tb1.c_check = tb2.choice WHERE tb1.hcode=${hcode}) su 
+                GROUP BY su.hcode, su.category_questId ORDER BY su.hcode, su.category_questId ASC) res
+                ON ca.id = res.category_questId ORDER BY category_questId ASC`
+
+        res.json(result)
     } catch (err) {
         console.log(err)
         res.status(500).json({

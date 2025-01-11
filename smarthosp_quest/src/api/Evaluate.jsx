@@ -12,6 +12,17 @@ export const getSubQuetList = async (token) =>{
     )
 }
 
+//Get evaluate for split comma
+export const getListEvaluateByHosp3 = async (token, hcode) =>{
+    return await axios.get(import.meta.env.VITE_APP_API + `/splitComma?hcode=${hcode}`,
+        {
+            headers:{
+                Authorization: `Bearer ` + token
+            }
+        }
+    )
+}
+
 //Get Evaluate all
 export const getListEvaluateAll = async () =>{
     return await axios.get(import.meta.env.VITE_APP_API + `/getListEvaluateAll`)
@@ -239,8 +250,20 @@ export const uploadCyberImage = async (token, values) => {
 
 
 //Get cyber image data
-export const getCyberImageData = async (token, hcode) => {
-    return await axios.get(import.meta.env.VITE_APP_API + `/getCyberImageData?hcode=${hcode}`,
+export const getCyberSecurityLevelData = async (token, hcode) => {
+    return await axios.get(import.meta.env.VITE_APP_API + `/getCyberSecurityLevelData?hcode=${hcode}`,
+        {
+            headers: {
+                Authorization: `Bearer ` + token
+            }
+        }
+    )
+}
+
+
+//Get cyber image data
+export const removeFileById = async (token, id) => {
+    return await axios.get(import.meta.env.VITE_APP_API + `/removeFileById/`+ id,
         {
             headers: {
                 Authorization: `Bearer ` + token

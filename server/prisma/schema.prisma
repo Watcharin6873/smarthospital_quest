@@ -8,29 +8,29 @@ datasource db {
 }
 
 model Users {
-  id               Int                @id @default(autoincrement())
-  email            String
-  firstname_th     String
-  lastname_th      String
-  hcode            String
-  hname_th         String
-  position_id      String
-  position         String
-  district         String
-  province         String
-  zone             String
-  role             String             @default("user")
-  level            Int
-  objective        String
-  enabled          Boolean            @default(false)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  cyber_levels     Cyber_level[]
-  documents        Documents[]
-  evaluates        Evaluate[]
-  log_evaluate     Log_evaluate[]
-  log_ssj_approve  Log_ssj_approve[]
-  log_zone_approve Log_zone_approve[]
+  id                Int                @id @default(autoincrement())
+  email             String
+  firstname_th      String
+  lastname_th       String
+  hcode             String
+  hname_th          String
+  position_id       String
+  position          String
+  district          String
+  province          String
+  zone              String
+  role              String             @default("user")
+  level             Int
+  objective         String
+  enabled           Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  // cyber_risk_levels Cyber_risk_level[]
+  documents         Documents[]
+  evaluates         Evaluate[]
+  log_evaluate      Log_evaluate[]
+  log_ssj_approve   Log_ssj_approve[]
+  log_zone_approve  Log_zone_approve[]
 }
 
 model Category_quest {
@@ -186,32 +186,32 @@ model Log_evaluate {
 }
 
 model Hospitals {
-  id           Int           @id @default(autoincrement())
-  hcode        String        @unique
-  hname_th     String
-  tmbcode      String
-  tmbname      String
-  ampcode      String
-  ampname      String
-  provcode     String
-  provname     String
-  zone         String
-  typename     String
-  cyber_levels Cyber_level[]
-  evaluates    Evaluate[]
+  id                Int                @id @default(autoincrement())
+  hcode             String             @unique
+  hname_th          String
+  tmbcode           String
+  tmbname           String
+  ampcode           String
+  ampname           String
+  provcode          String
+  provname          String
+  zone              String
+  typename          String
+  // cyber_risk_levels Cyber_risk_level[]
+  evaluates         Evaluate[]
 }
 
-model Cyber_level {
-  id          Int       @id @default(autoincrement())
-  cyber_level String
-  cyber_image String
-  usersId     Int
-  hcode       String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  Hospitals   Hospitals @relation(fields: [hcode], references: [hcode])
-  Users       Users     @relation(fields: [usersId], references: [id])
-
-  @@index([hcode], map: "Cyber_level_hcode_fkey")
-  @@index([usersId], map: "Cyber_level_usersId_fkey")
+model Cyber_risk_level {
+  id              Int       @id @default(autoincrement())
+  hcode           String
+  province        String
+  hname_th        String
+  hosp_level      String
+  cyber_level     String
+  cyber_levelname String
+  zone_name       String
+  supplier        String
+  usersId         Int
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }

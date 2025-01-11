@@ -4,7 +4,7 @@ import Gold from '../../assets/Gold2.png'
 import Silver from '../../assets/Silver2.png'
 import { Blocks, HandPlatter, MonitorCog, UserRound } from 'lucide-react'
 import useGlobalStore from '../../store/global-store'
-import { getCyberImageData, sumEvaluateByHosp } from '../../api/Evaluate'
+import { getCyberSecurityLevelData, sumEvaluateByHosp } from '../../api/Evaluate'
 import { ArrowUpOutlined } from '@ant-design/icons'
 
 
@@ -36,7 +36,7 @@ const HomeUsers = () => {
   }
 
   const loadCyberImageData = async () => {
-    await getCyberImageData(token, user.hcode)
+    await getCyberSecurityLevelData(token, user.hcode)
       .then(res => {
         setCyberData(res.data)
       })

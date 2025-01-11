@@ -10,15 +10,25 @@ import {
     refreshEvaluate,
     saveDocuments,
     updateChoiceEvaluate,
-    uploadFileById
+    uploadFileById,
+    removeFileById
 } from '../../api/Evaluate'
-import { CircleCheck, CircleX, FilePenLine, LoaderCircle, MonitorCheck, RefreshCw } from 'lucide-react'
+import { CircleCheck, CircleX, FileCog, FilePenLine, LoaderCircle, MonitorCheck, RefreshCw, Trash } from 'lucide-react'
 import { getListTopic } from '../../api/Topic'
 import { Button, Checkbox, Divider, Form, Image, Input, InputNumber, Modal, Radio, Select, Space, Upload } from 'antd'
 import { getListQuests } from '../../api/Quest'
 import { EditOutlined, ExclamationCircleFilled, EyeTwoTone, UploadOutlined } from '@ant-design/icons'
 import { toast } from 'react-toastify'
 import axios from 'axios'
+import { pdfjs } from 'react-pdf';
+import PdfComp from './PdfComp'
+
+const { confirm } = Modal
+
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+
+
 
 const FormReportHosp = () => {
 
@@ -27,24 +37,37 @@ const FormReportHosp = () => {
     const [listCategoryQuest, setListCategoryQuest] = useState([])
     const [listQuest, setListQuest] = useState([])
     const [listEvaluate, setListEvaluate] = useState([])
-    const [evaluateById, setEvaluateById] = useState([])
+    const [evaluateById, setEvaluateById] = useState({})
     const [searchCategory, setSearchCategory] = useState([])
     const [searchQuest, setSearchQuest] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false)
     const [isModalUploadOpen, setIsModalUploadOpen] = useState(false)
+    const [isShowEvidenceModal, setIsShowEvidenceModal] = useState(false)
     const [formUpdate] = Form.useForm()
     const [formUpload] = Form.useForm()
     const [category_questId, setCategory_questtId] = useState('')
     const [document, setDocument] = useState()
     const [evidence, setEvidence] = useState()
     const [subQuestList, setSubQuestList] = useState([])
+    const [pdfFile, setPdfFile] = useState(null)
+    const [numPages, setNumPages] = useState();
+    const [pageNumber, setPageNumber] = useState(1);
 
     useEffect(() => {
-        loadListEvaluate(token)
         loadListCategoryQuest(token)
         loadListQuest(token)
         loadSubQuestList(token)
+        loadListEvaluate(token)
+    }, [])
+
+    useEffect(() => {
+        let timerId = setTimeout(() => {
+            refreshData()
+        }, 2000)
+        return () => {
+            clearTimeout(timerId)
+        }
     }, [])
 
     const loadSubQuestList = async () => {
@@ -108,7 +131,7 @@ const FormReportHosp = () => {
 
 
     const showUploadModal = async (value) => {
-        console.log(value)
+        console.log('Value: ', value)
         setIsModalUploadOpen(true)
         await getEvaluateById(token, value.id)
             .then(res => {
@@ -122,21 +145,8 @@ const FormReportHosp = () => {
 
     // console.log('Evaluate: ', evaluateById)
 
-    const refreshData = async (e) => {
-        loadListEvaluate(token)
-        // console.log({
-        //     category_questId,
-        //     hcode
-        // })
-        // setIsLoading(true)
-        // await refreshEvaluate(token, category_questId, hcode)
-        //     .then(res => {
-        //         setListEvaluate(res.data)
-        //     })
-        //     .catch(err => {
-        //         console.log(err.response.data)
-        //     })
-        //     .finally(() => setIsLoading(false))
+    const refreshData = () => {
+        setSearchCategory(listEvaluate.filter(f => f.category_questId === category_questId))
     }
 
     useEffect(() => {
@@ -231,6 +241,7 @@ const FormReportHosp = () => {
     const closeModal = () => {
         setIsModalUpdateOpen(false)
         setIsModalUploadOpen(false)
+        setIsShowEvidenceModal(false)
     }
 
     const showDocument = (values) => {
@@ -243,6 +254,19 @@ const FormReportHosp = () => {
                 } else {
                     toast.warning('ไม่พบข้อมูล!')
                 }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+    const showEvidenceModal = async (id) => {
+        setIsShowEvidenceModal(true)
+        await getEvaluateById(token, id)
+            .then(res => {
+                console.log("GetById: ", res.data)
+                setEvaluateById(res.data)
+                setPdfFile(`https://bdh-service.moph.go.th/api/smarthosp/file-uploads/${res.data.file_name}`)
             })
             .catch(err => {
                 console.log(err)
@@ -295,10 +319,37 @@ const FormReportHosp = () => {
     }))
 
 
-    console.log('Data1: ', dataSearchCategorys)
-    console.log('Data2: ', dataSubQuestLists)
+    // console.log('Data1: ', dataSearchCategorys)
+    // console.log('Data2: ', dataSubQuestLists)
 
+    function onDocumentLoadSuccess({ numPages }) {
+        setNumPages(numPages);
+    }
 
+    const removeFile = (id) => {
+        console.log(id)
+        confirm({
+            title: 'ต้องการลบไฟล์หลักฐานนี้หรือไม่?',
+            icon: <ExclamationCircleFilled />,
+            okText: 'ใช่',
+            okType: 'danger',
+            cancelText: 'ไม่',
+            onOk() {
+                removeFileById(token, id)
+                    .then(res => {
+                        toast.error(res.data.message)
+                        setIsShowEvidenceModal(false)
+                        loadListEvaluate(token)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        })
+    }
 
 
     return (
@@ -326,7 +377,7 @@ const FormReportHosp = () => {
                             </>
                             : null
                     }
-                    {/* <Button onClick={refreshData}><RefreshCw size={16} /></Button> */}
+                    <Button onClick={refreshData}><RefreshCw size={13} /> รีเฟรช</Button>
                 </div>
                 <Divider />
                 <div>
@@ -454,18 +505,20 @@ const FormReportHosp = () => {
                                                                         ?
                                                                         <>
                                                                             <div className='flex justify-center items-center'>
-                                                                                <Button onClick={() => showEvidence(item2)}>
+                                                                                <Button size='small' onClick={() => showEvidenceModal(item2.id)}>
                                                                                     <EyeTwoTone /> ดูไฟล์หลักฐาน
                                                                                 </Button>
-                                                                                {/* <Button onClick={() => showEvidence(item2)}>
-                                                                                    <EyeTwoTone /> ดูหลักฐาน
-                                                                                </Button> */}
                                                                             </div>
+                                                                            {/* <div>
+                                                                                <Button size='small' onClick={() => showEditImage(item2)}>
+                                                                                    <FileCog /> แก้ไขไฟล์
+                                                                                </Button>
+                                                                            </div> */}
                                                                         </>
                                                                         :
                                                                         <>
                                                                             <div className=''>
-                                                                                <Button onClick={() => showUploadModal(item2)}>
+                                                                                <Button size='small' onClick={() => showUploadModal(item2)}>
                                                                                     <UploadOutlined /> เพิ่มไฟล์ pdf
                                                                                 </Button>
                                                                             </div>
@@ -475,6 +528,7 @@ const FormReportHosp = () => {
                                                             <td className='text-center'>
                                                                 <div className=''>
                                                                     <Button
+                                                                        size='small'
                                                                         className='bg-yellow-400 text-white'
                                                                         onClick={() => showUpdateModal(item2.id)}
                                                                     >
@@ -677,6 +731,36 @@ const FormReportHosp = () => {
                     </Modal>
 
 
+                    {/* Modal view evidence */}
+                    <Modal
+                        title={
+                            <div className='flex justify-center'>
+                                <ExclamationCircleFilled className='text-yellow-500' /> &nbsp;
+                                <span className='text-xl font-bold'>ดูข้อมูลหลักฐาน</span>
+                            </div>
+                        }
+                        open={isShowEvidenceModal}
+                        // onOk={formUpdate.submit}
+                        onCancel={closeModal}
+                        width={700}
+                        style={{ top: 20 }}
+                        footer={
+                            <Button size='small' color='danger' onClick={closeModal} variant="dashed">ปิด</Button>
+                        }
+                    >
+                        <Divider />
+                        <div>
+                            <p className='text-slate-600 font-bold'>{evaluateById?.sub_quests?.sub_quest_name}</p>
+                        </div>
+                        <div className='flex gap-4 mt-2'>
+                            <Button size='small' color='danger' variant='outlined' onClick={() => removeFile(evaluateById?.id)}>
+                                <Trash size={16} /> ลบไฟล์หลักฐานนี้
+                            </Button>
+                        </div>
+                        <div>
+                            <PdfComp pdfFile={pdfFile} />
+                        </div>
+                    </Modal>
                 </div>
             </div>
         </div>

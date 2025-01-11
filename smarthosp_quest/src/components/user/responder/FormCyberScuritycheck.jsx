@@ -3,7 +3,7 @@ import useGlobalStore from '../../../store/global-store'
 import { Button, Divider, Form, Image, Input, Select, Upload } from 'antd'
 import { Squircle } from 'lucide-react'
 import { CheckSquareFilled, UploadOutlined } from '@ant-design/icons'
-import { getCyberImageData, uploadCyberImage } from '../../../api/Evaluate'
+import { getCyberSecurityLevelData, uploadCyberImage } from '../../../api/Evaluate'
 import { toast } from 'react-toastify'
 
 const FormCyberScuritycheck = () => {
@@ -75,7 +75,7 @@ const FormCyberScuritycheck = () => {
     }, [])
 
     const loadCyberImageData = async () => {
-        await getCyberImageData(token, user.hcode)
+        await getCyberSecurityLevelData(token, user.hcode)
             .then(res => {
                 setCyberData(res.data)
             })

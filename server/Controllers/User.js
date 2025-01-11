@@ -221,6 +221,7 @@ exports.approveUserOnProv = async(req, res) =>{
             AND:[
                 {province: province},
                 {enabled: true},
+                {objective: 'responder'},
                 {level: 4}
             ]
         }
@@ -242,6 +243,7 @@ exports.notApproveUserOnProv = async(req, res) =>{
         where:{
             AND:[
                 {province: province},
+                {objective: 'responder'},
                 {enabled: false},
                 {level: 4}
             ]

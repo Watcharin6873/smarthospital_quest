@@ -43,9 +43,10 @@ const ManageUsers = () => {
         { id: 12, zone: '12', zone_name: 'เขตสุขภาพที่ 12' }
     ]
 
-    const data1 = dataOfZone.sort((a, b) => (a.zone > b.zone) ? 1 : -1).map((item) => ({ ...item }))
+    const data1 = dataOfZone.sort((a, b) => (a.id > b.id) ? 1 : -1).map((item) => ({ ...item }))
 
     const optionOfZone = data1.map((item) => ({
+        key: item.id,
         value: item.zone,
         label: item.zone_name
     }))
@@ -369,9 +370,14 @@ const ManageUsers = () => {
                                     (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                 }
                                 placeholder='กรุณาเลือกหน่วยบริการ...'
-                                options={optionOfZone}
                                 style={{ width: '250px' }}
-                            />
+                            >
+                                {
+                                    dataOfZone.map((item)=>(
+                                        <Select.Option key={item.id} value={item.zone}>{item.zone_name}</Select.Option>
+                                    ))
+                                }
+                            </Select>
                         </Form.Item>
                         <Form.Item>
                             <Button

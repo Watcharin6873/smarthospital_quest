@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import useGlobalStore from '../../../../store/global-store'
-import Gem from '../../../../assets/gem-icons.png'
+import Gem from '../../../../assets/Blue-gem.png'
 import Gold from '../../../../assets/Gold2.png'
 import Silver from '../../../../assets/Silver2.png'
 import HospitalIcon from '../../../../assets/Hospital.png'
