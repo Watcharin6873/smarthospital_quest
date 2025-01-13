@@ -15,6 +15,7 @@ const FormEvaluateService = () => {
   const user = useGlobalStore((state) => state.user)
   const token = useGlobalStore((state) => state.token)
   const [isLoading, setIsLoading] = useState(false)
+  const [disableButton, setDisableButton] = useState(false);
   const [isShowUploadModal, setIsShowUploadModal] = useState(false)
   const [isShowUploadItemModal, setIsShowUploadItemModal] = useState(false)
   const [listQuest, setListQuest] = useState([])
@@ -52,6 +53,7 @@ const FormEvaluateService = () => {
   }))
 
   const selectQuest = async (id) => {
+    setDisableButton(false)
     setIsLoading(true)
     console.log(id)
     await getListSubQuestsForEvaluate(token, id)
@@ -81,6 +83,7 @@ const FormEvaluateService = () => {
   }))
 
   const handleSubmit = async (fieldValue) => {
+    setDisableButton(true)
     const results = [];
     dataSource.forEach((qItem) => {
       results.push({
@@ -455,6 +458,7 @@ const FormEvaluateService = () => {
                               type='primary'
                               htmlType='submit'
                               style={{ width: 500 }}
+                              disabled={disableButton}
                             >
                               <Save /> บันทึกผลการประเมิน
                             </Button>

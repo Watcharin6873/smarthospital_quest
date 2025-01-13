@@ -34,8 +34,8 @@ const Login = () => {
     const values = {
       grant_type: 'authorization_code',
       code: code,
-      // redirect_uri: 'https://bdh-service.moph.go.th/smarthosp-quest/login/',
-      redirect_uri: 'http://localhost:5173/smarthosp-quest/login/',
+      redirect_uri: 'https://bdh-service.moph.go.th/smarthosp-quest/login/',
+      // redirect_uri: 'http://localhost:5173/smarthosp-quest/login/',
       client_id: '019274d1-ac2a-7352-b73a-ca66a5b135fb',
       client_secret: '97e76d1d6eff9ac1ee377d598c0fe995f018a9c3'
     }
@@ -154,8 +154,8 @@ const Login = () => {
               <Button
                 className='h-12'
                 block
-                // href='https://moph.id.th/oauth/redirect?client_id=019274d1-ac2a-7352-b73a-ca66a5b135fb&redirect_uri=https://bdh-service.moph.go.th/smarthosp-quest/login/&response_type=code'
-                href='https://moph.id.th/oauth/redirect?client_id=019274d1-ac2a-7352-b73a-ca66a5b135fb&redirect_uri=http://localhost:5173/smarthosp-quest/login/&response_type=code'
+                href='https://moph.id.th/oauth/redirect?client_id=019274d1-ac2a-7352-b73a-ca66a5b135fb&redirect_uri=https://bdh-service.moph.go.th/smarthosp-quest/login/&response_type=code'
+                // href='https://moph.id.th/oauth/redirect?client_id=019274d1-ac2a-7352-b73a-ca66a5b135fb&redirect_uri=http://localhost:5173/smarthosp-quest/login/&response_type=code'
                 // disabled
               >
                 <img

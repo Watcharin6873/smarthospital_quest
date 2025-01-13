@@ -8,29 +8,28 @@ datasource db {
 }
 
 model Users {
-  id                Int                @id @default(autoincrement())
-  email             String
-  firstname_th      String
-  lastname_th       String
-  hcode             String
-  hname_th          String
-  position_id       String
-  position          String
-  district          String
-  province          String
-  zone              String
-  role              String             @default("user")
-  level             Int
-  objective         String
-  enabled           Boolean            @default(false)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  // cyber_risk_levels Cyber_risk_level[]
-  documents         Documents[]
-  evaluates         Evaluate[]
-  log_evaluate      Log_evaluate[]
-  log_ssj_approve   Log_ssj_approve[]
-  log_zone_approve  Log_zone_approve[]
+  id               Int                @id @default(autoincrement())
+  email            String
+  firstname_th     String
+  lastname_th      String
+  hcode            String
+  hname_th         String
+  position_id      String
+  position         String
+  district         String
+  province         String
+  zone             String
+  role             String             @default("user")
+  level            Int
+  objective        String
+  enabled          Boolean            @default(false)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  documents        Documents[]
+  evaluates        Evaluate[]
+  log_evaluate     Log_evaluate[]
+  log_ssj_approve  Log_ssj_approve[]
+  log_zone_approve Log_zone_approve[]
 }
 
 model Category_quest {
@@ -186,23 +185,22 @@ model Log_evaluate {
 }
 
 model Hospitals {
-  id                Int                @id @default(autoincrement())
-  hcode             String             @unique
-  hname_th          String
-  tmbcode           String
-  tmbname           String
-  ampcode           String
-  ampname           String
-  provcode          String
-  provname          String
-  zone              String
-  typename          String
-  // cyber_risk_levels Cyber_risk_level[]
-  evaluates         Evaluate[]
+  id        Int        @id @default(autoincrement())
+  hcode     String     @unique
+  hname_th  String
+  tmbcode   String
+  tmbname   String
+  ampcode   String
+  ampname   String
+  provcode  String
+  provname  String
+  zone      String
+  typename  String
+  evaluates Evaluate[]
 }
 
 model Cyber_risk_level {
-  id              Int       @id @default(autoincrement())
+  id              Int      @id @default(autoincrement())
   hcode           String
   province        String
   hname_th        String
@@ -212,6 +210,19 @@ model Cyber_risk_level {
   zone_name       String
   supplier        String
   usersId         Int
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model Sum_approve_evaluate {
+  category_questId        BigInt?
+  hcode                   String? @db.Text
+  sub_quest_total_point   Float?
+  sub_quest_require_point Float?
+  cyber_level             String? @db.Text
+  cyber_levelname         String? @db.Text
+  updatedAt               String? @db.Text
+
+  @@ignore
 }

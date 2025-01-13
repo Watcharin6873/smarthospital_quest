@@ -148,7 +148,7 @@ const HomeUsers = () => {
   return (
     <div>
 
-      <div className='grid grid-cols-4 gap-4'>
+      <div className='grid grid-cols-4 gap-2'>
 
         <div className='bg-white rounded-md shadow-md p-3'>
           <div className='flex items-center gap-2'>
@@ -157,7 +157,7 @@ const HomeUsers = () => {
             </div>
             <p className='text-2xl text-green-700 font-bold'>ด้านโครงสร้าง</p>
           </div>
-          <div className='flex justify-center items-baseline gap-2 my-3'>
+          <div className='flex justify-center items-baseline gap-1 my-3'>
             <div className='w-36 text-center border rounded-md p-5'>
               <p className=''>คะแนนเต็ม</p>
               {
@@ -197,7 +197,7 @@ const HomeUsers = () => {
             </div>
             <p className='text-2xl text-green-700 font-bold'>ด้านบริหารจัดการ</p>
           </div>
-          <div className='flex justify-center items-baseline gap-2 my-3'>
+          <div className='flex justify-center items-baseline gap-1 my-3'>
             <div className='w-36 text-center border rounded-md p-5'>
               <p className=''>คะแนนเต็ม</p>
               {
@@ -237,7 +237,7 @@ const HomeUsers = () => {
             </div>
             <p className='text-2xl text-green-700 font-bold'>ด้านการบริการ</p>
           </div>
-          <div className='flex justify-center items-baseline gap-2 my-3'>
+          <div className='flex justify-center items-baseline gap-1 my-3'>
             <div className='w-36 text-center border rounded-md p-5'>
               <p className=''>คะแนนเต็ม</p>
               {
@@ -277,7 +277,7 @@ const HomeUsers = () => {
             </div>
             <p className='text-2xl text-green-700 font-bold'>ด้านบุคลากร</p>
           </div>
-          <div className='flex justify-center items-baseline gap-2 my-3'>
+          <div className='flex justify-center items-baseline gap-1 my-3'>
             <div className='w-36 text-center border rounded-md p-5'>
               <p className=''>คะแนนเต็ม</p>
               {
